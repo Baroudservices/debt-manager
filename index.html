@@ -20,7 +20,7 @@
             position: absolute; right: 0; top: 0;
             background: #333; color: #fff; border: none;
             padding: 8px 15px; border-radius: 8px; cursor: pointer;
-            display: none; /* مخفي بالبداية */
+            display: none; font-weight: bold;
         }
 
         /* --- الشاشة الرئيسية: المشاريع --- */
@@ -38,12 +38,12 @@
 
         /* --- شاشة التفاصيل: الزبائن --- */
         #details-view { width: 100%; max-width: 500px; display: none; }
-        .action-bar {
-            display: flex; gap: 10px; margin-bottom: 15px;
-        }
+        
         .bulk-btn {
             background: #ff9900; color: #000; font-weight: bold;
-            border: none; padding: 12px; border-radius: 10px; flex: 1; cursor: pointer;
+            border: none; padding: 15px; border-radius: 12px; width: 100%; 
+            cursor: pointer; margin-bottom: 20px; font-size: 1.1em;
+            box-shadow: 0 5px 15px rgba(255, 153, 0, 0.3);
         }
         
         .client-card {
@@ -54,10 +54,11 @@
         }
         .c-info h4 { margin: 0; font-size: 1.1em; }
         .c-info p { margin: 3px 0 0; color: #888; font-size: 0.8em; }
-        .c-amount { color: #ff4d4d; font-weight: bold; }
+        .c-amount { color: #ff4d4d; font-weight: bold; margin-left: 10px; }
+        
         .icon-btn {
             background: transparent; border: 1px solid #444; color: #fff;
-            padding: 8px; border-radius: 8px; margin-left: 5px; cursor: pointer;
+            padding: 8px 12px; border-radius: 8px; margin-left: 5px; cursor: pointer;
         }
 
         /* --- المودال (إضافة / إرسال جماعي) --- */
@@ -68,16 +69,17 @@
         }
         .modal-content {
             background: #222; padding: 25px; border-radius: 20px;
-            width: 80%; max-width: 350px; text-align: center; border: 1px solid #444;
+            width: 85%; max-width: 350px; text-align: center; border: 1px solid #444;
         }
         input {
             width: 100%; padding: 12px; margin: 8px 0;
             background: #333; border: 1px solid #555; color: #fff;
             border-radius: 8px; text-align: center; box-sizing: border-box;
+            font-family: 'Tajawal'; font-weight: bold;
         }
         .save-btn {
             width: 100%; padding: 12px; background: var(--main-color);
-            border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer;
+            border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; color: #000;
         }
 
         /* ستايل وضع الإرسال الجماعي */
@@ -99,8 +101,8 @@
             position: fixed; bottom: 20px; right: 20px;
             background: var(--main-color); width: 60px; height: 60px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 30px; color: #fff; box-shadow: 0 5px 15px rgba(0,210,106,0.4);
-            cursor: pointer; border: none;
+            font-size: 30px; color: #000; box-shadow: 0 5px 15px rgba(0,210,106,0.4);
+            cursor: pointer; border: none; font-weight: bold;
         }
     </style>
 </head>
@@ -115,9 +117,7 @@
         </div>
 
     <div id="details-view">
-        <div class="action-bar">
-            <button class="bulk-btn" onclick="startBulkSender()">📢 إرسال تذكير للكل</button>
-        </div>
+        <button class="bulk-btn" onclick="startBulkSender()">📢 إرسال تذكير للكل</button>
         <div id="clients-list"></div>
     </div>
 
@@ -130,7 +130,7 @@
             <input type="number" id="in-phone" placeholder="رقم الهاتف" style="display:none">
             <input type="number" id="in-amount" placeholder="المبلغ ($)" style="display:none">
             <button class="save-btn" onclick="saveItem()">حفظ</button>
-            <button class="save-btn" style="background:#555; margin-top:5px" onclick="closeModal()">إلغاء</button>
+            <button class="save-btn" style="background:#555; color:#fff; margin-top:5px" onclick="closeModal()">إلغاء</button>
         </div>
     </div>
 
@@ -145,7 +145,7 @@
     </div>
 
 <script>
-    // هيكلية الداتا: مصفوفة مشاريع، كل مشروع بقلبه مصفوفة زبائن
+    // الداتا: إذا فاضية بنحط مشاريع افتراضية
     let data = JSON.parse(localStorage.getItem('baroud_pro_v2')) || [
         { name: "Baroud App", clients: [] },
         { name: "Hunting Store", clients: [] },
@@ -182,7 +182,7 @@
         let clients = data[currentProjectIndex].clients;
 
         if(clients.length === 0) {
-            list.innerHTML = '<p style="text-align:center; color:#555">ما في ديون مسجلة بعد</p>';
+            list.innerHTML = '<p style="text-align:center; color:#555">ما في ديون مسجلة بهيدا المشروع</p>';
             return;
         }
 
@@ -196,7 +196,7 @@
                     <div style="display:flex; align-items:center">
                         <div class="c-amount">$${c.amount}</div>
                         <button class="icon-btn" onclick="sendOne(${index})">💬</button>
-                        <button class="icon-btn" style="color:#ff4d4d" onclick="deleteClient(${index})">🗑️</button>
+                        <button class="icon-btn" style="color:#ff4d4d; border-color:#ff4d4d" onclick="deleteClient(${index})">🗑️</button>
                     </div>
                 </div>
             `;
@@ -211,6 +211,7 @@
         document.getElementById('details-view').style.display = 'block';
         document.querySelector('.back-btn').style.display = 'block';
         document.getElementById('page-title').innerText = data[index].name;
+        document.querySelector('.fab').innerText = '+'; // زر الإضافة
         renderClients();
     }
 
@@ -298,6 +299,9 @@
 
     function getWAMsg(client, project) {
         let phone = client.phone.toString();
+        // تنظيف الرقم من أي مسافات
+        phone = phone.replace(/\s/g, '');
+        // إضافة الكود اللبناني إذا مش موجود
         if(!phone.startsWith('961')) phone = '961' + phone;
         
         const msg = `مرحباً ${client.name}،\nحسابك بـ *${project}* هو: $${client.amount}.\nيرجى التسديد وشكراً!`;
@@ -333,7 +337,8 @@
     function updateBulkUI() {
         if(bulkIndex >= bulkQueue.length) {
             closeBulk();
-            alert("✅ تم إرسال التذكير للجميع!");
+            // تأخير بسيط للتنبيه
+            setTimeout(() => alert("✅ تم إرسال التذكير للجميع!"), 500);
             return;
         }
 
