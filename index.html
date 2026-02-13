@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroud Vault 3.3 💎</title>
+    <title>Baroud Vault 4.0 🛡️</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -24,6 +24,17 @@
             margin: 0; padding: 20px;
             min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* --- شاشة الدخول الرئيسية (Iron Gate) --- */
+        #master-login {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .login-logo {
+            font-size: 4rem; color: var(--primary); margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(0, 230, 118, 0.5);
         }
 
         /* --- الهيدر --- */
@@ -157,6 +168,17 @@
 </head>
 <body>
 
+    <div id="master-login">
+        <div class="login-logo"><i class="fa-solid fa-shield-halved"></i></div>
+        <h2 style="margin-bottom: 5px">ممنوع الدخول ⛔</h2>
+        <p style="color:#888; margin-bottom: 20px">المنطقة خاصة بـ Houssein Baroud</p>
+        
+        <div style="width: 300px; padding: 20px; background: #111; border-radius: 20px; border: 1px solid #333;">
+            <input type="password" id="master-pass" placeholder="أدخل كلمة المرور الرئيسية" style="font-size: 1.2rem; margin-bottom: 10px;">
+            <button class="btn-full" onclick="checkMasterKey()">دخول</button>
+        </div>
+    </div>
+
     <div class="header">
         <div class="app-title">BAROUD <span>VAULT</span></div>
         <button class="back-btn" onclick="goHome()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
@@ -178,7 +200,7 @@
     <div id="pin-modal" class="modal-overlay">
         <div class="modal-box">
             <h3>🔒 منطقة محمية</h3>
-            <p style="color:#888;">أدخل الرمز السري</p>
+            <p style="color:#888;">أدخل رمز المشروع</p>
             <input type="password" id="pin-input" placeholder="****" maxlength="8" style="font-size: 1.5rem; letter-spacing: 5px;">
             <button class="btn-full" onclick="verifyPin()">فتح</button>
             <button class="btn-cancel" onclick="closePinModal()">إلغاء</button>
@@ -237,6 +259,29 @@
     </div>
 
 <script>
+    // ⚠️⚠️⚠️ كلمة السر الرئيسية (غيرها من هنا) ⚠️⚠️⚠️
+    const MASTER_KEY = "Baroud5577"; 
+    // ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+
+    // --- نظام الدخول الرئيسي ---
+    // التحقق اذا كان المستخدم سجل دخول مسبقاً في هذه الجلسة
+    if (sessionStorage.getItem('baroud_logged_in') === 'true') {
+        document.getElementById('master-login').style.display = 'none';
+    }
+
+    function checkMasterKey() {
+        const input = document.getElementById('master-pass').value;
+        if(input === MASTER_KEY) {
+            // كلمة السر صحيحة
+            document.getElementById('master-login').style.display = 'none';
+            // حفظ حالة الدخول للجلسة (عشان اذا عمل ريفرش ما يطلبها كل ثانية)
+            sessionStorage.setItem('baroud_logged_in', 'true');
+        } else {
+            alert("❌ كلمة مرور خاطئة!");
+        }
+    }
+
+    // --- باقي التطبيق (نفس الكود السابق) ---
     let db = JSON.parse(localStorage.getItem('baroud_secure_v2')) || [];
     let activeProjectIdx = -1;
     let pendingProjectIdx = -1;
@@ -244,31 +289,17 @@
 
     renderProjects();
 
-    // --- نظام الرسائل الجديد ---
     function showMsg(title, text, type) {
         const icon = document.getElementById('msg-icon');
         const titleEl = document.getElementById('msg-title');
         const textEl = document.getElementById('msg-text');
-        
-        titleEl.innerText = title;
-        textEl.innerText = text;
-        
-        if(type === 'success') {
-            icon.innerHTML = '✅';
-            icon.style.color = 'var(--primary)';
-        } else {
-            icon.innerHTML = '⚠️';
-            icon.style.color = '#ffcc00'; // أصفر تحذيري
-        }
-        
+        titleEl.innerText = title; textEl.innerText = text;
+        if(type === 'success') { icon.innerHTML = '✅'; icon.style.color = 'var(--primary)'; } 
+        else { icon.innerHTML = '⚠️'; icon.style.color = '#ffcc00'; }
         document.getElementById('msg-modal').style.display = 'flex';
     }
+    function closeMsgModal() { document.getElementById('msg-modal').style.display = 'none'; }
 
-    function closeMsgModal() {
-        document.getElementById('msg-modal').style.display = 'none';
-    }
-
-    // --- العرض ---
     function renderProjects() {
         const container = document.getElementById('projects-view');
         container.innerHTML = '';
@@ -296,16 +327,13 @@
         const list = document.getElementById('clients-list');
         const totalEl = document.getElementById('total-debt');
         list.innerHTML = '';
-        
         const clients = db[activeProjectIdx].clients;
         const total = clients.reduce((acc, curr) => acc + curr.amount, 0);
         totalEl.innerText = '$' + total;
-
         if(clients.length === 0) {
             list.innerHTML = '<div style="padding:20px; text-align:center; color:#666">لا يوجد ديون مسجلة</div>';
             return;
         }
-
         clients.forEach((c, idx) => {
             const initials = c.name.substring(0,2).toUpperCase();
             const descHtml = c.desc ? `<span class="c-desc">${c.desc}</span>` : '';
@@ -330,35 +358,25 @@
         });
     }
 
-    // --- العمليات ---
     function requestAccess(idx) {
         pendingProjectIdx = idx;
         document.getElementById('pin-modal').style.display = 'flex';
         document.getElementById('pin-input').value = '';
         document.getElementById('pin-input').focus();
     }
-
     function verifyPin() {
         const input = document.getElementById('pin-input').value;
         if(input === db[pendingProjectIdx].pin) {
-            activeProjectIdx = pendingProjectIdx;
-            closePinModal();
-            openProjectView();
-        } else {
-            // استبدال Alert القديم
-            showMsg("رمز خاطئ", "الرمز السري الذي أدخلته غير صحيح!", "error");
-        }
+            activeProjectIdx = pendingProjectIdx; closePinModal(); openProjectView();
+        } else { showMsg("رمز خاطئ", "الرمز السري غير صحيح!", "error"); }
     }
-
     function saveData() {
         if(activeProjectIdx === -1) {
             const name = document.getElementById('new-p-name').value;
             const pin = document.getElementById('new-p-pin').value;
             if(name && pin) {
                 db.push({ name: name, pin: pin, clients: [] });
-                updateStorage();
-                renderProjects();
-                closeAddModal();
+                updateStorage(); renderProjects(); closeAddModal();
             } else { showMsg("نقص معلومات", "الرجاء تعبئة الاسم والرمز السري", "error"); }
         } else {
             const name = document.getElementById('new-c-name').value;
@@ -367,88 +385,52 @@
             const desc = document.getElementById('new-c-desc').value || ""; 
             if(name && phone && amount) {
                 db[activeProjectIdx].clients.push({ name, phone, amount: parseFloat(amount), desc });
-                updateStorage();
-                renderClients();
-                closeAddModal();
-            } else { showMsg("نقص معلومات", "الرجاء تعبئة بيانات الزبون والمبلغ", "error"); }
+                updateStorage(); renderClients(); closeAddModal();
+            } else { showMsg("نقص معلومات", "الرجاء تعبئة البيانات كاملة", "error"); }
         }
     }
-
     function confirmDelete() {
         if(pendingDeleteIdx > -1) {
             db[activeProjectIdx].clients.splice(pendingDeleteIdx, 1);
-            updateStorage();
-            renderClients();
-            closeDeleteModal();
+            updateStorage(); renderClients(); closeDeleteModal();
         }
     }
-
-    // --- الإرسال الجماعي ---
-    let bulkQ = [];
-    let bulkIdx = 0;
-
+    let bulkQ = []; let bulkIdx = 0;
     function startBulk() {
         bulkQ = db[activeProjectIdx].clients;
-        if(bulkQ.length === 0) {
-            // استبدال Alert القديم
-            return showMsg("لا يوجد زبائن", "لا يوجد أي ديون مسجلة في هذا المشروع.", "error");
-        }
-        bulkIdx = 0;
-        document.getElementById('bulk-modal').style.display = 'flex';
-        updateBulkUI();
+        if(bulkQ.length === 0) return showMsg("لا يوجد زبائن", "لا يوجد ديون مسجلة.", "error");
+        bulkIdx = 0; document.getElementById('bulk-modal').style.display = 'flex'; updateBulkUI();
     }
-
     function updateBulkUI() {
-        if(bulkIdx >= bulkQ.length) {
-            closeBulkModal();
-            // استبدال Alert القديم
-            return showMsg("تم بنجاح", "تم الانتهاء من إرسال جميع الرسائل!", "success");
-        }
+        if(bulkIdx >= bulkQ.length) { closeBulkModal(); return showMsg("تم بنجاح", "تم الإرسال للجميع!", "success"); }
         const c = bulkQ[bulkIdx];
         document.getElementById('bulk-c-name').innerText = c.name;
         document.getElementById('bulk-c-amount').innerText = '$' + c.amount;
         document.getElementById('bulk-c-desc').innerText = c.desc || "بدون وصف";
         document.getElementById('bulk-counter').innerText = `الزبون ${bulkIdx + 1} من ${bulkQ.length}`;
     }
-
     function sendNextBulk() {
-        const c = bulkQ[bulkIdx];
-        const proj = db[activeProjectIdx].name;
-        window.open(getWaLink(c, proj), '_blank');
-        bulkIdx++;
-        updateBulkUI(); 
+        const c = bulkQ[bulkIdx]; const proj = db[activeProjectIdx].name;
+        window.open(getWaLink(c, proj), '_blank'); bulkIdx++; updateBulkUI(); 
     }
 
-    // --- Helper Functions ---
     function closePinModal() { document.getElementById('pin-modal').style.display = 'none'; pendingProjectIdx = -1; }
     function openProjectView() {
-        document.getElementById('projects-view').style.display = 'none';
-        document.getElementById('details-view').style.display = 'block';
-        document.querySelector('.back-btn').style.display = 'block';
-        document.querySelector('.app-title').innerHTML = db[activeProjectIdx].name;
+        document.getElementById('projects-view').style.display = 'none'; document.getElementById('details-view').style.display = 'block';
+        document.querySelector('.back-btn').style.display = 'block'; document.querySelector('.app-title').innerHTML = db[activeProjectIdx].name;
         renderClients();
     }
     function goHome() {
-        activeProjectIdx = -1;
-        document.getElementById('projects-view').style.display = 'block';
-        document.getElementById('details-view').style.display = 'none';
-        document.querySelector('.back-btn').style.display = 'none';
-        document.querySelector('.app-title').innerHTML = 'BAROUD <span>VAULT</span>';
-        renderProjects();
+        activeProjectIdx = -1; document.getElementById('projects-view').style.display = 'block';
+        document.getElementById('details-view').style.display = 'none'; document.querySelector('.back-btn').style.display = 'none';
+        document.querySelector('.app-title').innerHTML = 'BAROUD <span>VAULT</span>'; renderProjects();
     }
     function openAddModal() {
-        const modal = document.getElementById('add-modal');
-        const pInputs = document.getElementById('project-inputs');
-        const cInputs = document.getElementById('client-inputs');
-        const title = document.getElementById('modal-title');
+        const modal = document.getElementById('add-modal'); const pInputs = document.getElementById('project-inputs');
+        const cInputs = document.getElementById('client-inputs'); const title = document.getElementById('modal-title');
         document.querySelectorAll('input').forEach(i => i.value = '');
-        if(activeProjectIdx === -1) {
-            title.innerText = "إنشاء مشروع جديد 🔐";
-            pInputs.style.display = 'block'; cInputs.style.display = 'none';
-        } else {
-            title.innerText = "إضافة دين جديد 💸";
-            pInputs.style.display = 'none'; cInputs.style.display = 'block';
-        }
+        if(activeProjectIdx === -1) { title.innerText = "إنشاء مشروع جديد 🔐"; pInputs.style.display = 'block'; cInputs.style.display = 'none'; } 
+        else { title.innerText = "إضافة دين جديد 💸"; pInputs.style.display = 'none'; cInputs.style.display = 'block'; }
         modal.style.display = 'flex';
     }
     function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; }
@@ -457,17 +439,12 @@
     function closeBulkModal() { document.getElementById('bulk-modal').style.display = 'none'; }
     function updateStorage() { localStorage.setItem('baroud_secure_v2', JSON.stringify(db)); }
     function getWaLink(client, projName) {
-        let ph = client.phone.toString().replace(/\s/g, '');
-        if(!ph.startsWith('961')) ph = '961' + ph;
+        let ph = client.phone.toString().replace(/\s/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
         const descText = client.desc ? `\nالبيان: ${client.desc}` : '';
         const msg = `مرحباً ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.${descText}\nيرجى التسديد وشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
-    function sendSingle(cIdx) {
-        const client = db[activeProjectIdx].clients[cIdx];
-        const proj = db[activeProjectIdx].name;
-        window.open(getWaLink(client, proj), '_blank');
-    }
+    function sendSingle(cIdx) { const client = db[activeProjectIdx].clients[cIdx]; const proj = db[activeProjectIdx].name; window.open(getWaLink(client, proj), '_blank'); }
 
 </script>
 </body>
