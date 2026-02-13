@@ -4,119 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Baroud Vault 💎</title>
-    
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root {
-            --primary: #00e676;
-            --bg: #0a0a0a;
-            --card-bg: #1a1a1a;
-            --border: rgba(255, 255, 255, 0.08);
-            --danger: #ff5252;
-            --edit: #ffd740;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: #ffffff;
-            font-family: 'Cairo', sans-serif;
-            margin: 0; padding-bottom: 100px;
-            direction: rtl; text-align: right;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Dashboard Luxury */
-        .top-dashboard {
-            background: linear-gradient(180deg, #161616 0%, var(--bg) 100%);
-            padding: 30px 20px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-
-        .brand-name { font-size: 1.2rem; font-weight: 900; text-align: center; color: #555; letter-spacing: 1px; }
+        :root { --primary: #00e676; --bg: #0a0a0a; --card-bg: #1a1a1a; --border: rgba(255, 255, 255, 0.08); --danger: #ff5252; --edit: #ffd740; }
+        body { background-color: var(--bg); color: #ffffff; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 100px; direction: rtl; text-align: right; }
+        .top-dashboard { background: linear-gradient(180deg, #161616 0%, var(--bg) 100%); padding: 30px 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+        .brand-name { font-size: 1.2rem; font-weight: 900; text-align: center; color: #555; }
         .brand-name span { color: var(--primary); }
-
-        .balance-card {
-            background: linear-gradient(135deg, #00e676 0%, #00a056 100%);
-            padding: 25px; border-radius: 28px;
-            text-align: center; color: #000;
-            margin-top: 15px;
-            box-shadow: 0 15px 35px rgba(0, 230, 118, 0.2);
-        }
-
-        .balance-label { font-size: 0.85rem; font-weight: 700; opacity: 0.8; }
-        .balance-amount { font-size: 3rem; font-weight: 900; margin-top: 5px; }
-
-        /* Modern List Style */
-        .section-title { padding: 0 25px; margin-bottom: 15px; font-size: 0.9rem; color: #888; font-weight: bold; }
-        .list-container { padding: 0 15px; }
-
-        .app-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 24px; padding: 18px; margin-bottom: 15px;
-            display: flex; align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .card-icon {
-            width: 55px; height: 55px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            color: var(--primary);
-            border-radius: 18px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; margin-left: 18px;
-        }
-
+        .balance-card { background: linear-gradient(135deg, #00e676 0%, #00a056 100%); padding: 25px; border-radius: 28px; text-align: center; color: #000; margin-top: 15px; box-shadow: 0 15px 35px rgba(0, 230, 118, 0.2); }
+        .balance-amount { font-size: 3rem; font-weight: 900; }
+        .app-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 18px; margin-bottom: 15px; display: flex; align-items: center; }
         .card-info { flex: 1; }
-        .card-info h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #eee; }
-        .card-info p { margin: 4px 0 0; font-size: 0.85rem; color: #777; }
-        .desc-tag { display: inline-block; background: rgba(0, 230, 118, 0.1); color: var(--primary); padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; margin-top: 6px; }
-
-        .client-actions { text-align: left; }
-        .price-tag { display: block; font-size: 1.3rem; font-weight: 900; color: #fff; margin-bottom: 8px; }
-        .action-btns { display: flex; gap: 15px; justify-content: flex-end; }
-        .action-btns i { font-size: 1.4rem; cursor: pointer; }
-
-        /* Floating Nav */
-        .bottom-nav {
-            position: fixed; bottom: 15px; left: 15px; right: 15px;
-            background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(20px);
-            border: 1px solid var(--border); height: 75px; border-radius: 25px;
-            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-        }
-
-        .nav-item { color: #555; display: flex; flex-direction: column; align-items: center; border: none; background: none; font-family: 'Cairo'; font-size: 0.75rem; font-weight: 700; }
+        .card-info h3 { margin: 0; font-size: 1.1rem; color: #eee; }
+        .price-tag { font-size: 1.3rem; font-weight: 900; color: #fff; }
+        .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(20px); border: 1px solid var(--border); height: 75px; border-radius: 25px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { color: #555; background: none; border: none; font-family: 'Cairo'; font-size: 0.75rem; font-weight: 700; }
         .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 1.4rem; }
-
-        .nav-add-btn {
-            background: var(--primary); width: 60px; height: 60px; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; color: #000; transform: translateY(-20px);
-            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4); border: 5px solid var(--bg);
-        }
-
-        /* Luxury Modals */
+        .nav-add-btn { background: var(--primary); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #000; transform: translateY(-20px); box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4); border: 5px solid var(--bg); }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 2000; }
         .modal-box { background: #181818; border: 1px solid var(--border); width: 90%; max-width: 360px; padding: 30px; border-radius: 35px; text-align: center; }
-        
-        input { width: 100%; padding: 18px; margin: 10px 0; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 18px; text-align: center; font-family: 'Cairo'; font-size: 1rem; outline: none; box-sizing: border-box; }
-        input:focus { border-color: var(--primary); background: #282828; }
-
+        input { width: 100%; padding: 18px; margin: 10px 0; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 18px; text-align: center; font-family: 'Cairo'; outline: none; box-sizing: border-box; }
         .btn-primary { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; border-radius: 20px; font-weight: 900; font-size: 1.1rem; cursor: pointer; margin-top: 10px; font-family: 'Cairo'; }
-        .btn-cancel { background: transparent; color: #666; border: none; margin-top: 15px; font-weight: 700; cursor: pointer; font-family: 'Cairo'; }
-
-        .wish-selector { display: flex; gap: 10px; margin: 10px 0; }
-        .wish-option { flex: 1; padding: 12px; border: 1px solid #444; border-radius: 12px; cursor: pointer; background: none; color: #fff; font-family: 'Cairo'; }
-        .wish-option.selected { border-color: var(--primary); background: rgba(0, 230, 118, 0.1); color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -129,15 +39,11 @@
         </div>
     </div>
 
-    <div id="projects-view">
-        <div class="section-title">المشاريع النشطة</div>
-        <div class="list-container" id="projects-list"></div>
-    </div>
-
+    <div id="projects-view"><div class="list-container" id="projects-list"></div></div>
     <div id="details-view" style="display:none; padding: 0 15px;">
-        <button class="btn-cancel" onclick="goHome()" style="width:100%; text-align:left; font-size:1.1rem">🔙 عودة</button>
-        <h2 id="p-title" style="margin:5px 0 20px 0"></h2>
-        <button class="btn-primary" style="background:#25D366; color:#fff; margin-bottom:25px" onclick="openBulkSetup()">📢 تحصيل الكل</button>
+        <button class="btn-primary" style="background:#333; margin-bottom:10px" onclick="goHome()">🔙 عودة</button>
+        <h2 id="p-title"></h2>
+        <button class="btn-primary" style="background:#25D366; color:#fff; margin-bottom:20px" onclick="openBulkSetup()">📢 تحصيل الكل</button>
         <div id="clients-list"></div>
     </div>
 
@@ -147,74 +53,36 @@
         <button class="nav-item" onclick="openProjectSettings()"><i class="fa-solid fa-gear"></i><span>إعدادات</span></button>
     </div>
 
-    <div id="pin-modal" class="modal-overlay">
-        <div class="modal-box">
-            <div style="font-size:3rem; margin-bottom:15px">🔒</div>
-            <h3>دخول آمن</h3>
-            <input type="password" id="pin-in" placeholder="الرمز السري" inputmode="numeric" style="letter-spacing:10px; font-size:1.5rem">
-            <button class="btn-primary" onclick="verifyPin()">فتح</button>
-            <button class="btn-cancel" onclick="closePin()">إلغاء</button>
-        </div>
-    </div>
+    <div id="add-modal" class="modal-overlay"><div class="modal-box"><h3 id="m-title">إضافة</h3>
+        <div id="p-form"><input type="text" id="p-name" placeholder="اسم المشروع"></div>
+        <div id="c-form" style="display:none">
+            <input type="text" id="c-name" placeholder="الاسم الكامل"><input type="tel" id="c-phone" placeholder="رقم الهاتف"><input type="number" id="c-amount" placeholder="المبلغ ($)"><input type="text" id="c-desc" placeholder="البيان">
+        </div><button class="btn-primary" onclick="save()">حفظ</button><button class="btn-primary" style="background:none; color:#666" onclick="closeAdd()">إلغاء</button></div></div>
 
-    <div id="add-modal" class="modal-overlay">
-        <div class="modal-box">
-            <h3 id="m-title">إضافة جديدة</h3>
-            <div id="p-form"><input type="text" id="p-name" placeholder="اسم المشروع"><input type="password" id="p-pin" placeholder="الرمز السري (أرقام)" inputmode="numeric"></div>
-            <div id="c-form" style="display:none">
-                <button class="btn-primary" style="background:#333; color:#fff; font-size:0.9rem" onclick="getContact()">📖 سحب من الأسماء</button>
-                <input type="text" id="c-name" placeholder="الاسم الكامل"><input type="tel" id="c-phone" placeholder="رقم الهاتف"><input type="number" id="c-amount" placeholder="المبلغ ($)"><input type="text" id="c-desc" placeholder="البيان">
-                <div class="wish-selector">
-                    <button class="wish-option selected" id="w1" onclick="selWish(1)">70385398</button>
-                    <button class="wish-option" id="w2" onclick="selWish(2)">70555732</button>
-                </div>
-            </div>
-            <button class="btn-primary" onclick="save()">حفظ البيانات</button>
-            <button class="btn-cancel" onclick="closeAdd()">إلغاء</button>
-        </div>
-    </div>
-
-    <div id="bulk-setup-modal" class="modal-overlay">
-        <div class="modal-box" style="border: 1px solid var(--primary);">
-            <div style="font-size:2.5rem; margin-bottom:10px">📢</div>
-            <h3>ملاحظة جماعية</h3>
-            <input type="text" id="bulk-note-in" placeholder="مثلاً: رمضان كريم">
-            <button class="btn-primary" onclick="startBulk()">بدء الإرسال 🚀</button>
-            <button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button>
-        </div>
-    </div>
-
-    <div id="bulk-run-modal" class="modal-overlay">
-        <div class="modal-box" style="background:#fff; color:#000; border:none">
-            <h2 id="b-name" style="margin-bottom:0">الاسم</h2>
-            <div id="b-total" style="font-size:4rem; font-weight:900; color:#d32f2f">$0</div>
-            <div id="b-desc" style="background:#f0f0f0; padding:10px; border-radius:12px; font-weight:700; margin-bottom:15px">البيان</div>
-            <p id="b-count" style="color:#888"></p>
-            <button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال الآن ✅</button>
-            <button class="btn-cancel" onclick="closeBulkRun()">إيقاف</button>
-        </div>
-    </div>
+    <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box"><h3>📢 ملاحظة للجميع</h3><input type="text" id="bulk-note-in" placeholder="مثلاً: يرجى التسديد"><button class="btn-primary" onclick="startBulk()">بدء 🚀</button></div></div>
+    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name"></h2><div id="b-total" style="font-size:4rem; font-weight:900; color:#d32f2f">$0</div><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال الآن ✅</button></div></div>
 
 <script>
     let db = JSON.parse(localStorage.getItem('baroud_v8')) || [];
-    let curP = -1, tempP = -1, editC = -1, isEditP = false, curW = "70385398", globalNote = "";
+    let curP = -1, editC = -1, isEditP = false, bQ = [], bI = 0, globalNote = "";
 
     function renderHome() {
         const list = document.getElementById('projects-list'); list.innerHTML = ''; let total = 0;
         db.forEach((p, i) => {
             let pSum = p.clients.reduce((s, c) => s + c.amount, 0); total += pSum;
-            list.innerHTML += `<div class="app-card" onclick="askPin(${i})"><div class="card-icon"><i class="fa-solid fa-vault"></i></div><div class="card-info"><h3>${p.name}</h3><p>${p.clients.length} زبائن</p></div><div style="text-align:left"><span class="price-tag" style="margin:0; font-size:1.1rem">$${pSum}</span></div></div>`;
+            list.innerHTML += `<div class="app-card" onclick="openProject(${i})"><div class="card-info"><h3>${p.name}</h3><p>${p.clients.length} زبائن</p></div><div class="price-tag">$${pSum}</div></div>`;
         });
         document.getElementById('main-total').innerText = '$' + total;
         document.getElementById('projects-view').style.display = 'block'; document.getElementById('details-view').style.display = 'none';
     }
 
+    function openProject(i) { curP = i; renderDetails(); }
+    
     function renderDetails() {
         const list = document.getElementById('clients-list'); list.innerHTML = ''; const p = db[curP];
         document.getElementById('p-title').innerText = p.name;
-        const pTotal = p.clients.reduce((s, c) => s + c.amount, 0); document.getElementById('main-total').innerText = '$' + pTotal;
         p.clients.forEach((c, i) => {
-            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone}</p>${c.desc ? '<span class="desc-tag">'+c.desc+'</span>' : ''}</div><div class="client-actions"><span class="price-tag">$${c.amount}</span><div class="action-btns"><i class="fa-brands fa-whatsapp" onclick="sendWA(${i})" style="color:#25D366"></i><i class="fa-solid fa-pen-to-square" onclick="openEditClient(${i})" style="color:var(--edit)"></i><i class="fa-solid fa-trash" onclick="delC(${i})" style="color:var(--danger)"></i></div></div></div>`;
+            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone}</p></div><div style="text-align:left"><span class="price-tag">$${c.amount}</span><br><i class="fa-brands fa-whatsapp" onclick="sendWA(${i})" style="color:#25D366; font-size:1.5rem"></i> <i class="fa-solid fa-trash" onclick="delC(${i})" style="color:red; margin-right:10px"></i></div></div>`;
         });
         document.getElementById('projects-view').style.display = 'none'; document.getElementById('details-view').style.display = 'block';
     }
@@ -223,40 +91,28 @@
         const name = (curP == -1 || isEditP) ? document.getElementById('p-name').value : document.getElementById('c-name').value;
         if(!name) return;
         if(curP == -1 || isEditP) {
-            const pin = document.getElementById('p-pin').value;
-            if(isEditP) { db[curP].name = name; db[curP].pin = pin; } else { db.push({ name, pin, clients: [] }); }
+            if(isEditP) db[curP].name = name; else db.push({ name, clients: [] });
         } else {
-            const obj = { name, phone: document.getElementById('c-phone').value, amount: parseFloat(document.getElementById('c-amount').value || 0), desc: document.getElementById('c-desc').value, wish: curW };
-            if(editC > -1) db[curP].clients[editC] = obj; else db[curP].clients.push(obj);
+            db[curP].clients.push({ name, phone: document.getElementById('c-phone').value, amount: parseFloat(document.getElementById('c-amount').value || 0), desc: document.getElementById('c-desc').value });
         }
-        localStorage.setItem('baroud_v8', JSON.stringify(db)); closeAdd(); curP == -1 ? renderHome() : renderDetails();
+        localStorage.setItem('baroud_v8', JSON.stringify(db)); closeAdd(); renderHome();
     }
 
     function getWaLink(c) {
         let ph = c.phone.replace(/\D/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
-        const note = globalNote ? `${globalNote}\n\n` : '';
-        const msg = `${note}${c.name}،\nحسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}\n\nيرجى التسديد عبر Wish لـ: ${c.wish || "70385398"}\n\nشكراً.`;
+        const msg = `${globalNote?globalNote+'\n\n':''}${c.name}، حسابك بـ *${db[curP].name}* هو: $${c.amount}\n\nشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
-    function autoNextAndSend() { window.open(getWaLink(bQ[bI]), '_blank'); bI++; if(bI >= bQ.length) { setTimeout(() => { closeBulkRun(); renderDetails(); }, 500); } else { updateBulk(); } }
-    function askPin(i) { tempP = i; document.getElementById('pin-modal').style.display = 'flex'; }
-    function verifyPin() { if(document.getElementById('pin-in').value == db[tempP].pin) { curP = tempP; closePin(); renderDetails(); } else alert('خطأ'); }
+    function autoNextAndSend() { window.open(getWaLink(bQ[bI]), '_blank'); bI++; if(bI >= bQ.length) { setTimeout(() => { document.getElementById('bulk-run-modal').style.display='none'; renderDetails(); }, 500); } else { updateBulk(); } }
     function goHome() { curP = -1; renderHome(); }
-    function closePin() { document.getElementById('pin-modal').style.display = 'none'; document.getElementById('pin-in').value=''; }
-    function openAdd() { editC = -1; isEditP = false; document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('add-modal').style.display = 'flex'; document.getElementById('p-form').style.display = curP == -1 ? 'block' : 'none'; document.getElementById('c-form').style.display = curP == -1 ? 'none' : 'block'; selWish(1); }
+    function openAdd() { isEditP = false; document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('add-modal').style.display = 'flex'; document.getElementById('p-form').style.display = curP == -1 ? 'block' : 'none'; document.getElementById('c-form').style.display = curP == -1 ? 'none' : 'block'; }
     function closeAdd() { document.getElementById('add-modal').style.display = 'none'; }
-    function selWish(n) { document.getElementById('w1').classList.toggle('selected', n==1); document.getElementById('w2').classList.toggle('selected', n==2); curW = (n==1)?"70385398":"70555732"; }
     function delC(i) { if(confirm('حذف؟')) { db[curP].clients.splice(i,1); localStorage.setItem('baroud_v8', JSON.stringify(db)); renderDetails(); }}
-    function openEditClient(i) { editC = i; const c = db[curP].clients[i]; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-amount').value = c.amount; document.getElementById('c-desc').value = c.desc || ""; selWish(c.wish=="70555732"?2:1); document.getElementById('m-title').innerText = "تعديل"; document.getElementById('p-form').style.display = 'none'; document.getElementById('c-form').style.display = 'block'; document.getElementById('add-modal').style.display = 'flex'; }
-    function openProjectSettings() { if(curP == -1) return; isEditP = true; document.getElementById('p-name').value = db[curP].name; document.getElementById('p-pin').value = db[curP].pin; document.getElementById('m-title').innerText = "إعدادات المشروع"; document.getElementById('p-form').style.display = 'block'; document.getElementById('c-form').style.display = 'none'; document.getElementById('add-modal').style.display = 'flex'; }
     function openBulkSetup() { bQ = db[curP].clients; if(!bQ.length) return; document.getElementById('bulk-setup-modal').style.display = 'flex'; }
-    function closeBulkSetup() { document.getElementById('bulk-setup-modal').style.display = 'none'; }
-    function startBulk() { globalNote = document.getElementById('bulk-note-in').value; closeBulkSetup(); bI = 0; document.getElementById('bulk-run-modal').style.display = 'flex'; updateBulk(); }
-    function updateBulk() { if(bI >= bQ.length) return; const c = bQ[bI]; document.getElementById('b-name').innerText = c.name; document.getElementById('b-total').innerText = '$' + c.amount; document.getElementById('b-desc').innerText = c.desc || "بدون بيان"; document.getElementById('b-count').innerText = (bI+1) + ' من ' + bQ.length; }
-    function closeBulkRun() { document.getElementById('bulk-run-modal').style.display = 'none'; }
+    function startBulk() { globalNote = document.getElementById('bulk-note-in').value; document.getElementById('bulk-setup-modal').style.display = 'none'; bI = 0; document.getElementById('bulk-run-modal').style.display = 'flex'; updateBulk(); }
+    function updateBulk() { const c = bQ[bI]; document.getElementById('b-name').innerText = c.name; document.getElementById('b-total').innerText = '$' + c.amount; }
     function sendWA(i) { globalNote = ""; window.open(getWaLink(db[curP].clients[i]), '_blank'); }
-    async function getContact() { try { const cs = await navigator.contacts.select(['name', 'tel'], { multiple: false }); if(cs.length) { document.getElementById('c-name').value = cs[0].name[0]; let n = cs[0].tel[0].replace(/\D/g, ''); if(n.startsWith('961')) n=n.substring(3); if(n.startsWith('0')) n=n.substring(1); document.getElementById('c-phone').value = n; } } catch(e) {} }
 
     renderHome();
 </script>
