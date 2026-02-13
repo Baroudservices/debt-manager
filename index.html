@@ -3,171 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroud Manager Pro 🚀</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Baroud Vault 🔒</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --main-color: #00d26a; --bg-color: #121212; --card-bg: #1e1e1e; }
+        :root {
+            --primary: #00e676; /* نيون أخضر */
+            --danger: #ff1744;
+            --dark: #000000;
+            --glass: rgba(30, 30, 30, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
         body {
-            background-color: var(--bg-color); color: #fff;
-            font-family: 'Tajawal', sans-serif; margin: 0; padding: 20px;
+            background-color: var(--dark);
+            background-image: radial-gradient(circle at top left, #1a2a1f, #000);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            margin: 0; padding: 20px;
+            min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- الهيدر والتنقل --- */
-        .header { width: 100%; text-align: center; margin-bottom: 20px; position: relative; }
+        /* --- الهيدر الفخم --- */
+        .header {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding: 0 10px;
+        }
+        .app-title { font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; }
+        .app-title span { color: var(--primary); }
+        
         .back-btn {
-            position: absolute; right: 0; top: 0;
-            background: #333; color: #fff; border: none;
-            padding: 8px 15px; border-radius: 8px; cursor: pointer;
-            display: none; font-weight: bold;
+            background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+            color: #fff; padding: 10px 15px; border-radius: 12px; cursor: pointer;
+            display: none; backdrop-filter: blur(10px);
         }
 
-        /* --- الشاشة الرئيسية: المشاريع --- */
+        /* --- الكروت والزجاج --- */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.2s;
+        }
+        
+        /* --- قائمة المشاريع --- */
         #projects-view { width: 100%; max-width: 500px; }
-        .project-card {
-            background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
-            padding: 20px; margin-bottom: 15px; border-radius: 15px;
-            border: 1px solid #333; cursor: pointer;
+        .project-item {
             display: flex; justify-content: space-between; align-items: center;
-            transition: 0.2s;
+            padding: 20px; cursor: pointer; position: relative; overflow: hidden;
         }
-        .project-card:active { transform: scale(0.98); }
-        .p-name { font-size: 1.2em; font-weight: bold; }
-        .p-total { color: var(--main-color); font-weight: 900; font-size: 1.1em; }
+        .project-item:active { transform: scale(0.98); background: rgba(255,255,255,0.05); }
+        .p-icon { 
+            background: rgba(0, 230, 118, 0.15); color: var(--primary);
+            width: 50px; height: 50px; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            margin-left: 15px;
+        }
+        .p-details h3 { margin: 0; font-size: 1.1rem; }
+        .p-details span { font-size: 0.8rem; color: #888; }
+        .lock-icon { color: #555; font-size: 0.9rem; }
 
-        /* --- شاشة التفاصيل: الزبائن --- */
+        /* --- داخل المشروع --- */
         #details-view { width: 100%; max-width: 500px; display: none; }
         
-        .bulk-btn {
-            background: #ff9900; color: #000; font-weight: bold;
-            border: none; padding: 15px; border-radius: 12px; width: 100%; 
-            cursor: pointer; margin-bottom: 20px; font-size: 1.1em;
-            box-shadow: 0 5px 15px rgba(255, 153, 0, 0.3);
+        .summary-card {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: #000; text-align: center; border: none;
         }
+        .summary-val { font-size: 2.5rem; font-weight: 900; margin: 5px 0; }
+        .summary-label { font-size: 0.9rem; opacity: 0.8; font-weight: bold; }
+
+        .client-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .client-item:last-child { border-bottom: none; }
         
-        .client-card {
-            background: var(--card-bg); padding: 15px;
-            border-radius: 12px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-right: 4px solid var(--main-color);
-        }
-        .c-info h4 { margin: 0; font-size: 1.1em; }
-        .c-info p { margin: 3px 0 0; color: #888; font-size: 0.8em; }
-        .c-amount { color: #ff4d4d; font-weight: bold; margin-left: 10px; }
-        
-        .icon-btn {
-            background: transparent; border: 1px solid #444; color: #fff;
-            padding: 8px 12px; border-radius: 8px; margin-left: 5px; cursor: pointer;
-        }
-
-        /* --- المودال (إضافة / إرسال جماعي) --- */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 100;
-            display: none; align-items: center; justify-content: center; flex-direction: column;
-        }
-        .modal-content {
-            background: #222; padding: 25px; border-radius: 20px;
-            width: 85%; max-width: 350px; text-align: center; border: 1px solid #444;
-        }
-        input {
-            width: 100%; padding: 12px; margin: 8px 0;
-            background: #333; border: 1px solid #555; color: #fff;
-            border-radius: 8px; text-align: center; box-sizing: border-box;
-            font-family: 'Tajawal'; font-weight: bold;
-        }
-        .save-btn {
-            width: 100%; padding: 12px; background: var(--main-color);
-            border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; color: #000;
-        }
-
-        /* ستايل وضع الإرسال الجماعي */
-        .sender-box {
-            background: #fff; color: #000; padding: 20px; border-radius: 20px;
-            width: 85%; text-align: center;
-        }
-        .sender-counter { font-size: 0.9em; color: #555; margin-bottom: 10px; }
-        .sender-name { font-size: 1.5em; font-weight: 900; margin-bottom: 5px; }
-        .sender-amount { font-size: 2em; color: #d32f2f; font-weight: bold; }
-        .next-btn {
-            background: #25D366; color: #fff; width: 100%; padding: 15px;
-            border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold;
-            margin-top: 15px; cursor: pointer;
-        }
-
-        /* زر الإضافة العائم */
-        .fab {
-            position: fixed; bottom: 20px; right: 20px;
-            background: var(--main-color); width: 60px; height: 60px;
+        .c-avatar {
+            width: 45px; height: 45px; background: #333; color: #fff;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 30px; color: #000; box-shadow: 0 5px 15px rgba(0,210,106,0.4);
-            cursor: pointer; border: none; font-weight: bold;
+            font-weight: bold; margin-left: 15px; font-size: 0.9rem;
+            border: 2px solid var(--primary);
         }
+        .c-info h4 { margin: 0; font-size: 1rem; }
+        .c-info p { margin: 2px 0 0; font-size: 0.75rem; color: #aaa; }
+        
+        .c-actions { display: flex; gap: 8px; }
+        .btn-mini {
+            width: 35px; height: 35px; border-radius: 10px; border: none;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .btn-wa { background: rgba(37, 211, 102, 0.2); color: #25D366; }
+        .btn-del { background: rgba(255, 23, 68, 0.2); color: var(--danger); }
+
+        /* --- الأزرار العائمة والمودال --- */
+        .fab {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: #000;
+            width: 65px; height: 65px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+            border: none; cursor: pointer; z-index: 99;
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            z-index: 1000; display: none; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: #1e1e1e; border: 1px solid var(--border);
+            width: 85%; max-width: 320px; padding: 25px; border-radius: 25px;
+            text-align: center;
+        }
+        
+        input {
+            width: 100%; padding: 15px; margin: 10px 0;
+            background: #111; border: 1px solid #333; color: #fff;
+            border-radius: 12px; text-align: center; font-size: 1rem;
+            font-family: 'Cairo'; outline: none; box-sizing: border-box;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .btn-full {
+            width: 100%; padding: 15px; background: var(--primary);
+            color: #000; font-weight: bold; border: none; border-radius: 12px;
+            font-size: 1rem; margin-top: 10px; cursor: pointer;
+        }
+        
+        /* زر إرسال للكل */
+        .bulk-send-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5253);
+            color: #fff; width: 100%; padding: 15px; border: none;
+            border-radius: 15px; font-weight: bold; margin-bottom: 20px;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            box-shadow: 0 5px 15px rgba(238, 82, 83, 0.3); cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="header">
-        <button class="back-btn" onclick="goHome()">🔙 رجوع</button>
-        <h2 id="page-title">مشاريع Baroud 💼</h2>
+        <div class="app-title">BAROUD <span>VAULT</span></div>
+        <button class="back-btn" onclick="goHome()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
     </div>
 
     <div id="projects-view">
         </div>
 
     <div id="details-view">
-        <button class="bulk-btn" onclick="startBulkSender()">📢 إرسال تذكير للكل</button>
-        <div id="clients-list"></div>
+        <div class="glass-card summary-card">
+            <div class="summary-label">مجموع الديون المستحقة</div>
+            <div class="summary-val" id="total-debt">$0</div>
+        </div>
+
+        <button class="bulk-send-btn" onclick="startBulk()">
+            <i class="fa-brands fa-whatsapp"></i> تحصيل الكل (إرسال تلقائي)
+        </button>
+
+        <div class="glass-card" style="padding: 0;" id="clients-list">
+            </div>
     </div>
 
-    <button class="fab" onclick="openAddModal()">+</button>
+    <button class="fab" onclick="openAddModal()"><i class="fa-solid fa-plus"></i></button>
 
-    <div id="add-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title">مشروع جديد</h3>
-            <input type="text" id="in-name" placeholder="الاسم (مثلاً: Hunting Store)">
-            <input type="number" id="in-phone" placeholder="رقم الهاتف" style="display:none">
-            <input type="number" id="in-amount" placeholder="المبلغ ($)" style="display:none">
-            <button class="save-btn" onclick="saveItem()">حفظ</button>
-            <button class="save-btn" style="background:#555; color:#fff; margin-top:5px" onclick="closeModal()">إلغاء</button>
+
+    <div id="pin-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-top:0">🔒 منطقة محمية</h3>
+            <p style="color:#888; font-size:0.9rem">أدخل الرمز السري لهذا المشروع</p>
+            <input type="password" id="pin-input" placeholder="****" maxlength="8" style="font-size: 1.5rem; letter-spacing: 5px;">
+            <button class="btn-full" onclick="verifyPin()">فتح الخزنة</button>
+            <button class="btn-full" style="background:transparent; color:#fff" onclick="closePinModal()">إلغاء</button>
         </div>
     </div>
 
-    <div id="bulk-modal" class="modal">
-        <div class="sender-box">
-            <div class="sender-counter" id="bulk-counter">جاري التحضير...</div>
-            <div class="sender-name" id="bulk-name">اسم الزبون</div>
-            <div class="sender-amount" id="bulk-amount">$0</div>
-            <button class="next-btn" onclick="sendNext()">ارسال واتساب 🚀</button>
-            <button style="background:transparent; border:none; color:#555; margin-top:10px" onclick="closeBulk()">إيقاف</button>
+
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-title" style="margin-top:0">مشروع جديد</h3>
+            
+            <div id="project-inputs">
+                <input type="text" id="new-p-name" placeholder="اسم المشروع (مثلاً: المحل)">
+                <input type="number" id="new-p-pin" placeholder="تعيين كلمة سر (مثلاً: 1234)">
+            </div>
+
+            <div id="client-inputs" style="display:none">
+                <input type="text" id="new-c-name" placeholder="اسم الزبون">
+                <input type="tel" id="new-c-phone" placeholder="رقم الهاتف (70123456)">
+                <input type="number" id="new-c-amount" placeholder="المبلغ ($)">
+            </div>
+
+            <button class="btn-full" onclick="saveData()">حفظ</button>
+            <button class="btn-full" style="background:transparent; color:#888" onclick="closeAddModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <div id="bulk-modal" class="modal-overlay">
+        <div class="modal-box" style="background: #fff; color:#000;">
+            <div style="font-size:3rem; margin-bottom:10px">💸</div>
+            <h3 style="margin:0" id="bulk-c-name">الاسم</h3>
+            <h1 style="margin:5px 0; color: #d32f2f; font-size: 2.5rem" id="bulk-c-amount">$0</h1>
+            <p id="bulk-counter" style="color:#666">الزبون 1 من 5</p>
+            
+            <button class="btn-full" style="background:#25D366; color:#fff" onclick="sendNextBulk()">
+                <i class="fa-brands fa-whatsapp"></i> إرسال واتساب
+            </button>
+            <button class="btn-full" style="background:transparent; color:#555" onclick="closeBulkModal()">إيقاف</button>
         </div>
     </div>
 
 <script>
-    // الداتا: إذا فاضية بنحط مشاريع افتراضية
-    let data = JSON.parse(localStorage.getItem('baroud_pro_v2')) || [
-        { name: "Baroud App", clients: [] },
-        { name: "Hunting Store", clients: [] },
-        { name: "Tombola", clients: [] }
-    ];
-
-    let currentProjectIndex = -1; // -1 يعني نحنا بالصفحة الرئيسية
+    // --- البيانات ---
+    // بنية الداتا: { name: "Project", pin: "1234", clients: [] }
+    let db = JSON.parse(localStorage.getItem('baroud_secure_v1')) || [];
     
-    // --- دوال العرض (View Logic) ---
+    let activeProjectIdx = -1;
+    let pendingProjectIdx = -1; // للمشروع اللي ناطر الباسورد
 
+    // --- التشغيل ---
+    renderProjects();
+
+    // --- دوال العرض ---
     function renderProjects() {
         const container = document.getElementById('projects-view');
         container.innerHTML = '';
-        
-        data.forEach((proj, index) => {
-            // حساب مجموع الديون للمشروع
-            let total = proj.clients.reduce((sum, c) => sum + c.amount, 0);
-            
+
+        if(db.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#555; margin-top:50px">ابدأ بإضافة مشروع جديد (+)</p>';
+            return;
+        }
+
+        db.forEach((proj, idx) => {
+            const total = proj.clients.reduce((acc, curr) => acc + curr.amount, 0);
             container.innerHTML += `
-                <div class="project-card" onclick="openProject(${index})">
-                    <div class="p-name">${proj.name}</div>
-                    <div class="p-total">$${total}</div>
+                <div class="glass-card project-item" onclick="requestAccess(${idx})">
+                    <div style="display:flex; align-items:center">
+                        <div class="p-icon"><i class="fa-solid fa-briefcase"></i></div>
+                        <div class="p-details" style="margin-left:15px">
+                            <h3>${proj.name}</h3>
+                            <span>${proj.clients.length} زبائن • مجموع: $${total}</span>
+                        </div>
+                    </div>
+                    <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
                 </div>
             `;
         });
@@ -175,199 +261,204 @@
 
     function renderClients() {
         const list = document.getElementById('clients-list');
+        const totalEl = document.getElementById('total-debt');
         list.innerHTML = '';
         
-        if(currentProjectIndex === -1) return;
-
-        let clients = data[currentProjectIndex].clients;
+        const clients = db[activeProjectIdx].clients;
+        const total = clients.reduce((acc, curr) => acc + curr.amount, 0);
+        totalEl.innerText = '$' + total;
 
         if(clients.length === 0) {
-            list.innerHTML = '<p style="text-align:center; color:#555">ما في ديون مسجلة بهيدا المشروع</p>';
+            list.innerHTML = '<div style="padding:20px; text-align:center; color:#666">لا يوجد ديون مسجلة</div>';
             return;
         }
 
-        clients.forEach((c, index) => {
+        clients.forEach((c, idx) => {
+            // أول حرفين للاسم
+            const initials = c.name.substring(0,2).toUpperCase();
+            
             list.innerHTML += `
-                <div class="client-card">
-                    <div class="c-info">
-                        <h4>${c.name}</h4>
-                        <p>${c.phone}</p>
+                <div class="client-item">
+                    <div style="display:flex; align-items:center">
+                        <div class="c-avatar">${initials}</div>
+                        <div class="c-info" style="margin-left:15px">
+                            <h4>${c.name}</h4>
+                            <p>${c.phone}</p>
+                        </div>
                     </div>
                     <div style="display:flex; align-items:center">
-                        <div class="c-amount">$${c.amount}</div>
-                        <button class="icon-btn" onclick="sendOne(${index})">💬</button>
-                        <button class="icon-btn" style="color:#ff4d4d; border-color:#ff4d4d" onclick="deleteClient(${index})">🗑️</button>
+                        <span style="font-weight:bold; margin-left:10px">$${c.amount}</span>
+                        <div class="c-actions">
+                            <button class="btn-mini btn-wa" onclick="sendSingle(${idx})"><i class="fa-brands fa-whatsapp"></i></button>
+                            <button class="btn-mini btn-del" onclick="deleteClient(${idx})"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
                 </div>
             `;
         });
     }
 
-    // --- التنقل ---
+    // --- الحماية (Password System) ---
+    function requestAccess(idx) {
+        pendingProjectIdx = idx;
+        document.getElementById('pin-modal').style.display = 'flex';
+        document.getElementById('pin-input').value = '';
+        document.getElementById('pin-input').focus();
+    }
 
-    function openProject(index) {
-        currentProjectIndex = index;
+    function verifyPin() {
+        const input = document.getElementById('pin-input').value;
+        const correctPin = db[pendingProjectIdx].pin;
+
+        if(input === correctPin) {
+            // الباسورد صح
+            activeProjectIdx = pendingProjectIdx;
+            closePinModal();
+            openProjectView();
+        } else {
+            alert("❌ رمز خطأ! حاول مجدداً");
+        }
+    }
+
+    function closePinModal() {
+        document.getElementById('pin-modal').style.display = 'none';
+        pendingProjectIdx = -1;
+    }
+
+    // --- التنقل ---
+    function openProjectView() {
         document.getElementById('projects-view').style.display = 'none';
         document.getElementById('details-view').style.display = 'block';
         document.querySelector('.back-btn').style.display = 'block';
-        document.getElementById('page-title').innerText = data[index].name;
-        document.querySelector('.fab').innerText = '+'; // زر الإضافة
+        document.querySelector('.app-title').innerHTML = db[activeProjectIdx].name;
         renderClients();
     }
 
     function goHome() {
-        currentProjectIndex = -1;
+        activeProjectIdx = -1;
         document.getElementById('projects-view').style.display = 'block';
         document.getElementById('details-view').style.display = 'none';
         document.querySelector('.back-btn').style.display = 'none';
-        document.getElementById('page-title').innerText = "مشاريع Baroud 💼";
+        document.querySelector('.app-title').innerHTML = 'BAROUD <span>VAULT</span>';
         renderProjects();
     }
 
-    // --- الإضافة والحفظ ---
-
+    // --- الإضافة ---
     function openAddModal() {
         const modal = document.getElementById('add-modal');
+        const pInputs = document.getElementById('project-inputs');
+        const cInputs = document.getElementById('client-inputs');
         const title = document.getElementById('modal-title');
-        const inName = document.getElementById('in-name');
-        const inPhone = document.getElementById('in-phone');
-        const inAmount = document.getElementById('in-amount');
 
-        if(currentProjectIndex === -1) {
-            // إضافة مشروع
-            title.innerText = "إضافة مشروع جديد";
-            inName.placeholder = "اسم المشروع (مثلاً: مطعم)";
-            inPhone.style.display = 'none';
-            inAmount.style.display = 'none';
+        // تصفير الحقول
+        document.querySelectorAll('input').forEach(i => i.value = '');
+
+        if(activeProjectIdx === -1) {
+            title.innerText = "إنشاء مشروع جديد 🔐";
+            pInputs.style.display = 'block';
+            cInputs.style.display = 'none';
         } else {
-            // إضافة زبون
-            title.innerText = "تسجيل دين جديد";
-            inName.placeholder = "اسم الزبون";
-            inPhone.style.display = 'block';
-            inAmount.style.display = 'block';
+            title.innerText = "إضافة دين جديد 💸";
+            pInputs.style.display = 'none';
+            cInputs.style.display = 'block';
         }
-        
-        inName.value = ''; inPhone.value = ''; inAmount.value = '';
         modal.style.display = 'flex';
     }
 
-    function saveItem() {
-        const name = document.getElementById('in-name').value;
-        
-        if(currentProjectIndex === -1) {
-            // حفظ مشروع
-            if(name) {
-                data.push({ name: name, clients: [] });
-                saveData();
+    function saveData() {
+        if(activeProjectIdx === -1) {
+            // حفظ مشروع جديد
+            const name = document.getElementById('new-p-name').value;
+            const pin = document.getElementById('new-p-pin').value;
+            if(name && pin) {
+                db.push({ name: name, pin: pin, clients: [] });
+                updateStorage();
                 renderProjects();
-                closeModal();
-            }
+                closeAddModal();
+            } else { alert("الرجاء وضع اسم وكلمة سر"); }
         } else {
             // حفظ زبون
-            const phone = document.getElementById('in-phone').value;
-            const amount = document.getElementById('in-amount').value;
+            const name = document.getElementById('new-c-name').value;
+            const phone = document.getElementById('new-c-phone').value;
+            const amount = document.getElementById('new-c-amount').value;
             if(name && phone && amount) {
-                data[currentProjectIndex].clients.push({
+                db[activeProjectIdx].clients.push({
                     name: name,
                     phone: phone,
                     amount: parseFloat(amount)
                 });
-                saveData();
+                updateStorage();
                 renderClients();
-                closeModal();
+                closeAddModal();
             }
         }
     }
 
-    function deleteClient(idx) {
-        if(confirm("حذف هيدا الدين؟")) {
-            data[currentProjectIndex].clients.splice(idx, 1);
-            saveData();
+    function deleteClient(cIdx) {
+        if(confirm("حذف هذا الدين نهائياً؟")) {
+            db[activeProjectIdx].clients.splice(cIdx, 1);
+            updateStorage();
             renderClients();
         }
     }
 
-    function closeModal() {
+    function closeAddModal() {
         document.getElementById('add-modal').style.display = 'none';
     }
 
-    function saveData() {
-        localStorage.setItem('baroud_pro_v2', JSON.stringify(data));
+    function updateStorage() {
+        localStorage.setItem('baroud_secure_v1', JSON.stringify(db));
     }
 
-    // --- الواتساب (الإرسال الفردي والجماعي) ---
-
-    function getWAMsg(client, project) {
-        let phone = client.phone.toString();
-        // تنظيف الرقم من أي مسافات
-        phone = phone.replace(/\s/g, '');
-        // إضافة الكود اللبناني إذا مش موجود
-        if(!phone.startsWith('961')) phone = '961' + phone;
-        
-        const msg = `مرحباً ${client.name}،\nحسابك بـ *${project}* هو: $${client.amount}.\nيرجى التسديد وشكراً!`;
-        return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    // --- الواتساب ---
+    function getWaLink(client, projName) {
+        let ph = client.phone.toString().replace(/\s/g, '');
+        if(!ph.startsWith('961')) ph = '961' + ph;
+        const msg = `مرحبا ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.\nيرجى التسديد وشكراً.`;
+        return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
-    function sendOne(idx) {
-        const client = data[currentProjectIndex].clients[idx];
-        const projName = data[currentProjectIndex].name;
-        window.open(getWAMsg(client, projName), '_blank');
+    function sendSingle(cIdx) {
+        const client = db[activeProjectIdx].clients[cIdx];
+        const proj = db[activeProjectIdx].name;
+        window.open(getWaLink(client, proj), '_blank');
     }
 
-    // 🔥 نظام الإرسال الجماعي (Queue System) 🔥
-    let bulkQueue = [];
-    let bulkIndex = 0;
+    // --- الإرسال الجماعي ---
+    let bulkQ = [];
+    let bulkIdx = 0;
 
-    function startBulkSender() {
-        if(currentProjectIndex === -1) return;
-        
-        // جيب كل الزبائن بهيدا المشروع
-        bulkQueue = data[currentProjectIndex].clients;
-        
-        if(bulkQueue.length === 0) {
-            alert("ما في حدا تبعتله!");
-            return;
-        }
-
-        bulkIndex = 0;
+    function startBulk() {
+        bulkQ = db[activeProjectIdx].clients;
+        if(bulkQ.length === 0) return alert("لا يوجد زبائن!");
+        bulkIdx = 0;
         document.getElementById('bulk-modal').style.display = 'flex';
         updateBulkUI();
     }
 
     function updateBulkUI() {
-        if(bulkIndex >= bulkQueue.length) {
-            closeBulk();
-            // تأخير بسيط للتنبيه
-            setTimeout(() => alert("✅ تم إرسال التذكير للجميع!"), 500);
-            return;
+        if(bulkIdx >= bulkQ.length) {
+            closeBulkModal();
+            return alert("✅ انتهى الإرسال!");
         }
-
-        const client = bulkQueue[bulkIndex];
-        document.getElementById('bulk-counter').innerText = `الزبون ${bulkIndex + 1} من ${bulkQueue.length}`;
-        document.getElementById('bulk-name').innerText = client.name;
-        document.getElementById('bulk-amount').innerText = '$' + client.amount;
+        const c = bulkQ[bulkIdx];
+        document.getElementById('bulk-c-name').innerText = c.name;
+        document.getElementById('bulk-c-amount').innerText = '$' + c.amount;
+        document.getElementById('bulk-counter').innerText = `الزبون ${bulkIdx + 1} من ${bulkQ.length}`;
     }
 
-    function sendNext() {
-        const client = bulkQueue[bulkIndex];
-        const projName = data[currentProjectIndex].name;
-        
-        // فتح واتساب
-        window.open(getWAMsg(client, projName), '_blank');
-        
-        // الانتقال للتالي
-        bulkIndex++;
+    function sendNextBulk() {
+        const c = bulkQ[bulkIdx];
+        const proj = db[activeProjectIdx].name;
+        window.open(getWaLink(c, proj), '_blank');
+        bulkIdx++;
         updateBulkUI();
     }
 
-    function closeBulk() {
+    function closeBulkModal() {
         document.getElementById('bulk-modal').style.display = 'none';
     }
 
-    // تشغيل التطبيق
-    renderProjects();
-
 </script>
-
 </body>
 </html>
