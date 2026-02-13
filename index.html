@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroud Vault 4.1 🛡️</title>
+    <title>Baroud Vault 4.2 🛡️</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
             --primary: #00e676; 
-            --edit: #ffcc00; /* لون التعديل أصفر */
+            --edit: #ffcc00;
             --danger: #ff1744;
             --dark: #000000;
             --glass: rgba(30, 30, 30, 0.9);
@@ -104,16 +104,15 @@
         }
         
         .c-actions { display: flex; gap: 5px; }
-
         .btn-mini {
             width: 35px; height: 35px; border-radius: 10px; border: none;
             display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
         .btn-wa { background: rgba(37, 211, 102, 0.2); color: #25D366; }
-        .btn-edit { background: rgba(255, 204, 0, 0.2); color: var(--edit); } /* زر التعديل الجديد */
+        .btn-edit { background: rgba(255, 204, 0, 0.2); color: var(--edit); }
         .btn-del { background: rgba(255, 23, 68, 0.2); color: var(--danger); }
 
-        /* --- الأزرار العائمة والمودال --- */
+        /* --- الأزرار والمودال --- */
         .fab {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: var(--primary); color: #000;
@@ -162,6 +161,22 @@
             box-shadow: 0 5px 15px rgba(238, 82, 83, 0.3); cursor: pointer;
         }
 
+        /* --- تصميم اختيار Wish --- */
+        .wish-selector {
+            display: flex; gap: 10px; margin: 10px 0;
+        }
+        .wish-option {
+            flex: 1; padding: 10px; border: 1px solid #444; border-radius: 10px;
+            cursor: pointer; background: #222; transition: 0.2s; font-size: 0.9rem;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .wish-option.selected {
+            border-color: var(--primary); background: rgba(0, 230, 118, 0.1);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+        }
+        .wish-option i { font-size: 1.2rem; margin-bottom: 5px; color: #ccc; }
+        .wish-option.selected i { color: var(--primary); }
+
     </style>
 </head>
 <body>
@@ -207,16 +222,31 @@
     <div id="add-modal" class="modal-overlay">
         <div class="modal-box">
             <h3 id="modal-title" style="margin-top:0">مشروع جديد</h3>
+            
             <div id="project-inputs">
                 <input type="text" id="new-p-name" placeholder="اسم المشروع">
                 <input type="number" id="new-p-pin" placeholder="تعيين رمز سري">
             </div>
+
             <div id="client-inputs" style="display:none">
                 <input type="text" id="new-c-name" placeholder="اسم الزبون">
                 <input type="tel" id="new-c-phone" placeholder="رقم الهاتف">
                 <input type="number" id="new-c-amount" placeholder="المبلغ ($)">
                 <input type="text" id="new-c-desc" placeholder="الوصف (اختياري)">
+                
+                <p style="margin: 10px 0 5px 0; font-size: 0.9rem; color:#888">اختر رقم Wish للدفع:</p>
+                <div class="wish-selector">
+                    <div class="wish-option selected" id="wish-opt-1" onclick="selectWish(1)">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>70385398</span>
+                    </div>
+                    <div class="wish-option" id="wish-opt-2" onclick="selectWish(2)">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>70555732</span>
+                    </div>
+                </div>
             </div>
+
             <button class="btn-full" onclick="saveData()">حفظ</button>
             <button class="btn-cancel" onclick="closeAddModal()">إلغاء</button>
         </div>
@@ -257,6 +287,11 @@
 
 <script>
     const MASTER_KEY = "baroud5577"; 
+    // أرقام الـ Wish الثابتة
+    const WISH_NUM_1 = "70385398";
+    const WISH_NUM_2 = "70555732";
+
+    let selectedWishNum = WISH_NUM_1; // افتراضياً الرقم الأول
 
     // --- دخول ---
     if (sessionStorage.getItem('baroud_logged_in') === 'true') {
@@ -275,7 +310,7 @@
     let activeProjectIdx = -1;
     let pendingProjectIdx = -1;
     let pendingDeleteIdx = -1;
-    let editingClientIdx = -1; // متغير جديد لتحديد اذا عم نعدل أو نضيف جديد
+    let editingClientIdx = -1;
 
     renderProjects();
 
@@ -362,15 +397,27 @@
         } else { showMsg("رمز خاطئ", "الرمز السري غير صحيح!", "error"); }
     }
     
+    // --- التعامل مع خيارات Wish ---
+    function selectWish(option) {
+        // تحديث الشكل
+        document.getElementById('wish-opt-1').classList.remove('selected');
+        document.getElementById('wish-opt-2').classList.remove('selected');
+        document.getElementById('wish-opt-' + option).classList.add('selected');
+        
+        // حفظ القيمة المختارة
+        selectedWishNum = (option === 1) ? WISH_NUM_1 : WISH_NUM_2;
+    }
+
     // --- تعديل وإضافة ---
     function openAddModal() {
-        editingClientIdx = -1; // وضع إضافة جديد
+        editingClientIdx = -1; 
         const modal = document.getElementById('add-modal');
         const pInputs = document.getElementById('project-inputs');
         const cInputs = document.getElementById('client-inputs');
         const title = document.getElementById('modal-title');
         
         document.querySelectorAll('input').forEach(i => i.value = '');
+        selectWish(1); // إعادة تعيين لرقم 1 افتراضياً
 
         if(activeProjectIdx === -1) { 
             title.innerText = "إنشاء مشروع جديد 🔐"; pInputs.style.display = 'block'; cInputs.style.display = 'none'; 
@@ -381,16 +428,22 @@
     }
 
     function openEditModal(idx) {
-        editingClientIdx = idx; // وضع التعديل
+        editingClientIdx = idx;
         const modal = document.getElementById('add-modal');
         const title = document.getElementById('modal-title');
         const client = db[activeProjectIdx].clients[idx];
 
-        // تعبئة البيانات الحالية
         document.getElementById('new-c-name').value = client.name;
         document.getElementById('new-c-phone').value = client.phone;
         document.getElementById('new-c-amount').value = client.amount;
         document.getElementById('new-c-desc').value = client.desc || "";
+
+        // تحديد رقم الـ Wish المحفوظ سابقاً
+        if(client.wishNumber === WISH_NUM_2) {
+            selectWish(2);
+        } else {
+            selectWish(1);
+        }
 
         document.getElementById('project-inputs').style.display = 'none';
         document.getElementById('client-inputs').style.display = 'block';
@@ -400,7 +453,6 @@
 
     function saveData() {
         if(activeProjectIdx === -1) {
-            // حفظ مشروع
             const name = document.getElementById('new-p-name').value;
             const pin = document.getElementById('new-p-pin').value;
             if(name && pin) {
@@ -408,19 +460,21 @@
                 updateStorage(); renderProjects(); closeAddModal();
             } else { showMsg("نقص معلومات", "الرجاء تعبئة الاسم والرمز السري", "error"); }
         } else {
-            // حفظ زبون (أو تعديل)
             const name = document.getElementById('new-c-name').value;
             const phone = document.getElementById('new-c-phone').value;
             const amount = document.getElementById('new-c-amount').value;
             const desc = document.getElementById('new-c-desc').value || ""; 
             
+            // إضافة رقم الـ Wish المختار
+            const wishNum = selectedWishNum;
+
             if(name && phone && amount) {
+                const clientObj = { name, phone, amount: parseFloat(amount), desc, wishNumber: wishNum };
+                
                 if(editingClientIdx > -1) {
-                    // تحديث القديم
-                    db[activeProjectIdx].clients[editingClientIdx] = { name, phone, amount: parseFloat(amount), desc };
+                    db[activeProjectIdx].clients[editingClientIdx] = clientObj;
                 } else {
-                    // إضافة جديد
-                    db[activeProjectIdx].clients.push({ name, phone, amount: parseFloat(amount), desc });
+                    db[activeProjectIdx].clients.push(clientObj);
                 }
                 updateStorage(); renderClients(); closeAddModal();
             } else { showMsg("نقص معلومات", "الرجاء تعبئة البيانات كاملة", "error"); }
@@ -470,11 +524,15 @@
     function closeBulkModal() { document.getElementById('bulk-modal').style.display = 'none'; }
     function updateStorage() { localStorage.setItem('baroud_secure_v2', JSON.stringify(db)); }
     
-    // --- واتساب مع أرقام Wish ---
+    // --- واتساب مع Wish الديناميكي ---
     function getWaLink(client, projName) {
         let ph = client.phone.toString().replace(/\s/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
         const descText = client.desc ? `\nالبيان: ${client.desc}` : '';
-        const msg = `مرحباً ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.${descText}\n\nيرجى التسديد عبر Wish Money على:\n70385398\n70555732\n\nشكراً.`;
+        
+        // استخدام الرقم المختار فقط
+        const wishNumber = client.wishNumber || WISH_NUM_1; // احتياط لو داتا قديمة
+
+        const msg = `مرحباً ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.${descText}\n\nيرجى التسديد عبر Wish Money على:\n${wishNumber}\n\nشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
     function sendSingle(cIdx) { const client = db[activeProjectIdx].clients[cIdx]; const proj = db[activeProjectIdx].name; window.open(getWaLink(client, proj), '_blank'); }
