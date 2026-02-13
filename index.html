@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baroud Debt Manager 💸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: 'Tajawal', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .total-box {
+            background: linear-gradient(45deg, #00d26a, #0099ff);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 210, 106, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .total-title { font-size: 0.9em; opacity: 0.8; }
+        .total-amount { font-size: 2.5em; font-weight: 900; margin: 5px 0; }
+
+        /* --- الفورم --- */
+        .input-group {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 10px;
+            font-family: 'Tajawal';
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 15px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* --- اللائحة --- */
+        .client-list {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .client-card {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-right: 5px solid #00d26a; /* مؤشر */
+        }
+
+        .client-info h3 { margin: 0; font-size: 1.1em; }
+        .client-info p { margin: 5px 0 0; color: #888; font-size: 0.8em; }
+        .debt-val { color: #ff4d4d; font-weight: bold; font-size: 1.1em; }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .wa-btn { background: #25D366; color: #fff; }
+        .del-btn { background: #ff0055; color: #fff; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>دفتر ديون Baroud 📒</h2>
+    </div>
+
+    <div class="total-box">
+        <div class="total-title">مجموع الديون بالسوق</div>
+        <div class="total-amount" id="total-display">$0</div>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="c-name" placeholder="اسم الزبون (مثلاً: علي حمادة)">
+        <input type="number" id="c-phone" placeholder="رقم الهاتف (بدون 0 في الأول) 70xxxxxx">
+        <input type="number" id="c-amount" placeholder="المبلغ ($)">
+        <button class="add-btn" onclick="addClient()">+ تسجيل دين جديد</button>
+    </div>
+
+    <div class="client-list" id="list-container">
+        </div>
+
+<script>
+    // 1. تحميل الداتا أول ما يفتح التطبيق
+    let clients = JSON.parse(localStorage.getItem('baroud_debts')) || [];
+    render();
+
+    function addClient() {
+        const name = document.getElementById('c-name').value;
+        const phone = document.getElementById('c-phone').value;
+        const amount = document.getElementById('c-amount').value;
+
+        if(name && phone && amount) {
+            // إضافة للقائمة
+            clients.push({
+                name: name,
+                phone: phone,
+                amount: parseFloat(amount)
+            });
+            
+            // حفظ وتحديث
+            saveData();
+            render();
+            
+            // تنظيف الخانات
+            document.getElementById('c-name').value = '';
+            document.getElementById('c-phone').value = '';
+            document.getElementById('c-amount').value = '';
+        } else {
+            alert('الرجاء تعبئة كل المعلومات!');
+        }
+    }
+
+    function deleteClient(index) {
+        if(confirm('أكيد بدك تمسح هيدا الدين؟')) {
+            clients.splice(index, 1);
+            saveData();
+            render();
+        }
+    }
+
+    function sendWhatsapp(index) {
+        const c = clients[index];
+        // نص الرسالة
+        const msg = `مرحبا ${c.name} 👋\nحبيت ذكرك بحسابك عنا بـ Baroud App.\nالقيمة المستحقة: $${c.amount}\n\nشكراً إلك!`;
+        
+        // تنسيق الرقم (نتأكد انو في كود البلد)
+        let phone = c.phone.toString();
+        if(!phone.startsWith('961')) {
+            phone = '961' + phone;
+        }
+
+        // فتح الرابط
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+        window.open(url, '_blank');
+    }
+
+    function saveData() {
+        localStorage.setItem('baroud_debts', JSON.stringify(clients));
+    }
+
+    function render() {
+        const list = document.getElementById('list-container');
+        const totalDisplay = document.getElementById('total-display');
+        
+        list.innerHTML = '';
+        let total = 0;
+
+        clients.forEach((c, index) => {
+            total += c.amount;
+            
+            // HTML لكل كرت
+            const card = `
+                <div class="client-card">
+                    <div class="client-info">
+                        <h3>${c.name}</h3>
+                        <p>${c.phone}</p>
+                        <div class="debt-val">$${c.amount}</div>
+                    </div>
+                    <div class="actions">
+                        <button class="icon-btn wa-btn" onclick="sendWhatsapp(${index})">💬 واتساب</button>
+                        <button class="icon-btn del-btn" onclick="deleteClient(${index})">🗑️</button>
+                    </div>
+                </div>
+            `;
+            list.innerHTML += card;
+        });
+
+        totalDisplay.innerText = '$' + total.toFixed(2);
+    }
+</script>
+
+</body>
+</html>
