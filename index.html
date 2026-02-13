@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroud Vault 3.1 💎</title>
+    <title>Baroud Vault 3.2 💎</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -64,7 +64,7 @@
             margin-left: 15px;
         }
         
-        /* --- التفاصيل والزبائن --- */
+        /* --- التفاصيل --- */
         #details-view { width: 100%; max-width: 500px; display: none; }
         
         .summary-card {
@@ -98,7 +98,7 @@
         .btn-wa { background: rgba(37, 211, 102, 0.2); color: #25D366; }
         .btn-del { background: rgba(255, 23, 68, 0.2); color: var(--danger); }
 
-        /* --- الأزرار العائمة والمودال --- */
+        /* --- المودال --- */
         .fab {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: var(--primary); color: #000;
@@ -117,6 +117,7 @@
             background: #1e1e1e; border: 1px solid var(--border);
             width: 85%; max-width: 320px; padding: 25px; border-radius: 25px;
             text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
         
         input {
@@ -131,6 +132,18 @@
             width: 100%; padding: 15px; background: var(--primary);
             color: #000; font-weight: bold; border: none; border-radius: 12px;
             font-size: 1rem; margin-top: 10px; cursor: pointer;
+        }
+
+        /* زر الإلغاء */
+        .btn-cancel {
+            background: transparent; color: #888; border: none;
+            margin-top: 10px; cursor: pointer; font-weight: bold; font-size: 0.9rem;
+        }
+
+        /* زر الحذف الأحمر */
+        .btn-delete {
+            background: var(--danger); color: #fff;
+            box-shadow: 0 5px 15px rgba(255, 23, 68, 0.3);
         }
         
         .bulk-send-btn {
@@ -173,7 +186,7 @@
             <p style="color:#888;">أدخل الرمز السري</p>
             <input type="password" id="pin-input" placeholder="****" maxlength="8" style="font-size: 1.5rem; letter-spacing: 5px;">
             <button class="btn-full" onclick="verifyPin()">فتح</button>
-            <button class="btn-full" style="background:transparent; color:#fff" onclick="closePinModal()">إلغاء</button>
+            <button class="btn-cancel" onclick="closePinModal()">إلغاء</button>
         </div>
     </div>
 
@@ -190,11 +203,24 @@
                 <input type="text" id="new-c-name" placeholder="اسم الزبون">
                 <input type="tel" id="new-c-phone" placeholder="رقم الهاتف (70xxxxxx)">
                 <input type="number" id="new-c-amount" placeholder="المبلغ ($)">
-                <input type="text" id="new-c-desc" placeholder="عن شو؟ (مثلاً: اشتراك نيتفلكس)">
+                <input type="text" id="new-c-desc" placeholder="عن شو؟ (مثلاً: اشتراك)">
             </div>
 
             <button class="btn-full" onclick="saveData()">حفظ</button>
-            <button class="btn-full" style="background:transparent; color:#888" onclick="closeAddModal()">إلغاء</button>
+            <button class="btn-cancel" onclick="closeAddModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="color: var(--danger); font-size: 3rem; margin-bottom: 10px;">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 style="margin:0">حذف الدين؟</h3>
+            <p style="color:#888; font-size:0.9rem; margin-bottom:20px">هل أنت متأكد أنك تريد حذف هذا الدين نهائياً؟ لا يمكن التراجع.</p>
+            
+            <button class="btn-full btn-delete" onclick="confirmDelete()">نعم، احذف</button>
+            <button class="btn-cancel" onclick="closeDeleteModal()">تراجع</button>
         </div>
     </div>
 
@@ -203,24 +229,22 @@
             <div style="font-size:3rem; margin-bottom:10px">📨</div>
             <h3 style="margin:0" id="bulk-c-name">الاسم</h3>
             <h1 style="margin:5px 0; color: #d32f2f; font-size: 2.5rem" id="bulk-c-amount">$0</h1>
-            
             <p id="bulk-c-desc" style="background:#eee; padding:5px 10px; border-radius:5px; display:inline-block; font-weight:bold;">...</p>
-            
             <p id="bulk-counter" style="color:#666; margin-top:5px;">الزبون 1 من 5</p>
             
             <button class="btn-full" style="background:#25D366; color:#fff" onclick="sendNextBulk()">
                 <i class="fa-brands fa-whatsapp"></i> إرسال واتساب
             </button>
-            <button class="btn-full" style="background:transparent; color:#555" onclick="closeBulkModal()">إيقاف</button>
+            <button class="btn-cancel" style="color:#555" onclick="closeBulkModal()">إيقاف</button>
         </div>
     </div>
 
 <script>
-    // تغيير مفتاح التخزين لضمان تحديث الهيكلية الجديدة
     let db = JSON.parse(localStorage.getItem('baroud_secure_v2')) || [];
     
     let activeProjectIdx = -1;
     let pendingProjectIdx = -1;
+    let pendingDeleteIdx = -1; // لتخزين رقم الزبون المراد حذفه
 
     renderProjects();
 
@@ -267,7 +291,6 @@
 
         clients.forEach((c, idx) => {
             const initials = c.name.substring(0,2).toUpperCase();
-            // عرض الوصف اذا موجود
             const descHtml = c.desc ? `<span class="c-desc">${c.desc}</span>` : '';
             
             list.innerHTML += `
@@ -284,7 +307,7 @@
                         <span style="font-weight:bold; margin-left:10px">$${c.amount}</span>
                         <div class="c-actions">
                             <button class="btn-mini btn-wa" onclick="sendSingle(${idx})"><i class="fa-brands fa-whatsapp"></i></button>
-                            <button class="btn-mini btn-del" onclick="deleteClient(${idx})"><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn-mini btn-del" onclick="requestDelete(${idx})"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 </div>
@@ -368,7 +391,7 @@
             const name = document.getElementById('new-c-name').value;
             const phone = document.getElementById('new-c-phone').value;
             const amount = document.getElementById('new-c-amount').value;
-            const desc = document.getElementById('new-c-desc').value || ""; // الوصف
+            const desc = document.getElementById('new-c-desc').value || ""; 
             
             if(name && phone && amount) {
                 db[activeProjectIdx].clients.push({
@@ -384,12 +407,24 @@
         }
     }
 
-    function deleteClient(cIdx) {
-        if(confirm("حذف هذا الدين؟")) {
-            db[activeProjectIdx].clients.splice(cIdx, 1);
+    // --- حذف جميل (Custom Delete Modal) ---
+    function requestDelete(cIdx) {
+        pendingDeleteIdx = cIdx;
+        document.getElementById('delete-modal').style.display = 'flex';
+    }
+
+    function confirmDelete() {
+        if(pendingDeleteIdx > -1) {
+            db[activeProjectIdx].clients.splice(pendingDeleteIdx, 1);
             updateStorage();
             renderClients();
+            closeDeleteModal();
         }
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').style.display = 'none';
+        pendingDeleteIdx = -1;
     }
 
     function closeAddModal() {
@@ -404,11 +439,8 @@
     function getWaLink(client, projName) {
         let ph = client.phone.toString().replace(/\s/g, '');
         if(!ph.startsWith('961')) ph = '961' + ph;
-        
-        // تجهيز الرسالة مع الوصف
         const descText = client.desc ? `\nالبيان: ${client.desc}` : '';
         const msg = `مرحباً ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.${descText}\nيرجى التسديد وشكراً.`;
-        
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
@@ -418,7 +450,7 @@
         window.open(getWaLink(client, proj), '_blank');
     }
 
-    // --- الإرسال الجماعي الذكي ---
+    // --- الإرسال الجماعي ---
     let bulkQ = [];
     let bulkIdx = 0;
 
@@ -445,15 +477,9 @@
     function sendNextBulk() {
         const c = bulkQ[bulkIdx];
         const proj = db[activeProjectIdx].name;
-        
-        // 1. فتح الواتساب
         window.open(getWaLink(c, proj), '_blank');
-        
-        // 2. التحضير للزبون التالي فوراً
         bulkIdx++;
         updateBulkUI(); 
-        
-        // ملاحظة: لما ترجع من الواتساب، رح تلاقي الشاشة تحدثت وصارت جاهزة للي بعده
     }
 
     function closeBulkModal() {
