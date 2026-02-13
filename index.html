@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroud Vault 🔒</title>
+    <title>Baroud Vault 3.1 💎</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #00e676; /* نيون أخضر */
+            --primary: #00e676; 
             --danger: #ff1744;
             --dark: #000000;
             --glass: rgba(30, 30, 30, 0.85);
@@ -26,7 +26,7 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- الهيدر الفخم --- */
+        /* --- الهيدر --- */
         .header {
             width: 100%; display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 25px; padding: 0 10px;
@@ -40,20 +40,17 @@
             display: none; backdrop-filter: blur(10px);
         }
 
-        /* --- الكروت والزجاج --- */
+        /* --- الكروت --- */
         .glass-card {
             background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 15px;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border); border-radius: 20px;
+            padding: 20px; margin-bottom: 15px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             transition: transform 0.2s;
         }
         
-        /* --- قائمة المشاريع --- */
+        /* --- المشاريع --- */
         #projects-view { width: 100%; max-width: 500px; }
         .project-item {
             display: flex; justify-content: space-between; align-items: center;
@@ -66,11 +63,8 @@
             display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
             margin-left: 15px;
         }
-        .p-details h3 { margin: 0; font-size: 1.1rem; }
-        .p-details span { font-size: 0.8rem; color: #888; }
-        .lock-icon { color: #555; font-size: 0.9rem; }
-
-        /* --- داخل المشروع --- */
+        
+        /* --- التفاصيل والزبائن --- */
         #details-view { width: 100%; max-width: 500px; display: none; }
         
         .summary-card {
@@ -78,14 +72,11 @@
             color: #000; text-align: center; border: none;
         }
         .summary-val { font-size: 2.5rem; font-weight: 900; margin: 5px 0; }
-        .summary-label { font-size: 0.9rem; opacity: 0.8; font-weight: bold; }
 
         .client-item {
             display: flex; align-items: center; justify-content: space-between;
             padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .client-item:last-child { border-bottom: none; }
-        
         .c-avatar {
             width: 45px; height: 45px; background: #333; color: #fff;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -94,8 +85,12 @@
         }
         .c-info h4 { margin: 0; font-size: 1rem; }
         .c-info p { margin: 2px 0 0; font-size: 0.75rem; color: #aaa; }
+        .c-desc { 
+            font-size: 0.7rem; color: var(--primary); 
+            background: rgba(0,230,118,0.1); padding: 2px 6px; 
+            border-radius: 4px; display: inline-block; margin-top: 2px;
+        }
         
-        .c-actions { display: flex; gap: 8px; }
         .btn-mini {
             width: 35px; height: 35px; border-radius: 10px; border: none;
             display: flex; align-items: center; justify-content: center; cursor: pointer;
@@ -125,7 +120,7 @@
         }
         
         input {
-            width: 100%; padding: 15px; margin: 10px 0;
+            width: 100%; padding: 15px; margin: 8px 0;
             background: #111; border: 1px solid #333; color: #fff;
             border-radius: 12px; text-align: center; font-size: 1rem;
             font-family: 'Cairo'; outline: none; box-sizing: border-box;
@@ -138,7 +133,6 @@
             font-size: 1rem; margin-top: 10px; cursor: pointer;
         }
         
-        /* زر إرسال للكل */
         .bulk-send-btn {
             background: linear-gradient(45deg, #ff6b6b, #ee5253);
             color: #fff; width: 100%; padding: 15px; border: none;
@@ -156,36 +150,32 @@
         <button class="back-btn" onclick="goHome()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
     </div>
 
-    <div id="projects-view">
-        </div>
+    <div id="projects-view"></div>
 
     <div id="details-view">
         <div class="glass-card summary-card">
-            <div class="summary-label">مجموع الديون المستحقة</div>
+            <div style="font-size:0.9rem; font-weight:bold; opacity:0.8">مجموع الديون المستحقة</div>
             <div class="summary-val" id="total-debt">$0</div>
         </div>
 
         <button class="bulk-send-btn" onclick="startBulk()">
-            <i class="fa-brands fa-whatsapp"></i> تحصيل الكل (إرسال تلقائي)
+            <i class="fa-brands fa-whatsapp"></i> تحصيل الكل (إرسال سريع)
         </button>
 
-        <div class="glass-card" style="padding: 0;" id="clients-list">
-            </div>
+        <div class="glass-card" style="padding: 0;" id="clients-list"></div>
     </div>
 
     <button class="fab" onclick="openAddModal()"><i class="fa-solid fa-plus"></i></button>
 
-
     <div id="pin-modal" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="margin-top:0">🔒 منطقة محمية</h3>
-            <p style="color:#888; font-size:0.9rem">أدخل الرمز السري لهذا المشروع</p>
+            <h3>🔒 منطقة محمية</h3>
+            <p style="color:#888;">أدخل الرمز السري</p>
             <input type="password" id="pin-input" placeholder="****" maxlength="8" style="font-size: 1.5rem; letter-spacing: 5px;">
-            <button class="btn-full" onclick="verifyPin()">فتح الخزنة</button>
+            <button class="btn-full" onclick="verifyPin()">فتح</button>
             <button class="btn-full" style="background:transparent; color:#fff" onclick="closePinModal()">إلغاء</button>
         </div>
     </div>
-
 
     <div id="add-modal" class="modal-overlay">
         <div class="modal-box">
@@ -198,8 +188,9 @@
 
             <div id="client-inputs" style="display:none">
                 <input type="text" id="new-c-name" placeholder="اسم الزبون">
-                <input type="tel" id="new-c-phone" placeholder="رقم الهاتف (70123456)">
+                <input type="tel" id="new-c-phone" placeholder="رقم الهاتف (70xxxxxx)">
                 <input type="number" id="new-c-amount" placeholder="المبلغ ($)">
+                <input type="text" id="new-c-desc" placeholder="عن شو؟ (مثلاً: اشتراك نيتفلكس)">
             </div>
 
             <button class="btn-full" onclick="saveData()">حفظ</button>
@@ -209,10 +200,13 @@
 
     <div id="bulk-modal" class="modal-overlay">
         <div class="modal-box" style="background: #fff; color:#000;">
-            <div style="font-size:3rem; margin-bottom:10px">💸</div>
+            <div style="font-size:3rem; margin-bottom:10px">📨</div>
             <h3 style="margin:0" id="bulk-c-name">الاسم</h3>
             <h1 style="margin:5px 0; color: #d32f2f; font-size: 2.5rem" id="bulk-c-amount">$0</h1>
-            <p id="bulk-counter" style="color:#666">الزبون 1 من 5</p>
+            
+            <p id="bulk-c-desc" style="background:#eee; padding:5px 10px; border-radius:5px; display:inline-block; font-weight:bold;">...</p>
+            
+            <p id="bulk-counter" style="color:#666; margin-top:5px;">الزبون 1 من 5</p>
             
             <button class="btn-full" style="background:#25D366; color:#fff" onclick="sendNextBulk()">
                 <i class="fa-brands fa-whatsapp"></i> إرسال واتساب
@@ -222,17 +216,15 @@
     </div>
 
 <script>
-    // --- البيانات ---
-    // بنية الداتا: { name: "Project", pin: "1234", clients: [] }
-    let db = JSON.parse(localStorage.getItem('baroud_secure_v1')) || [];
+    // تغيير مفتاح التخزين لضمان تحديث الهيكلية الجديدة
+    let db = JSON.parse(localStorage.getItem('baroud_secure_v2')) || [];
     
     let activeProjectIdx = -1;
-    let pendingProjectIdx = -1; // للمشروع اللي ناطر الباسورد
+    let pendingProjectIdx = -1;
 
-    // --- التشغيل ---
     renderProjects();
 
-    // --- دوال العرض ---
+    // --- العرض ---
     function renderProjects() {
         const container = document.getElementById('projects-view');
         container.innerHTML = '';
@@ -274,8 +266,9 @@
         }
 
         clients.forEach((c, idx) => {
-            // أول حرفين للاسم
             const initials = c.name.substring(0,2).toUpperCase();
+            // عرض الوصف اذا موجود
+            const descHtml = c.desc ? `<span class="c-desc">${c.desc}</span>` : '';
             
             list.innerHTML += `
                 <div class="client-item">
@@ -284,6 +277,7 @@
                         <div class="c-info" style="margin-left:15px">
                             <h4>${c.name}</h4>
                             <p>${c.phone}</p>
+                            ${descHtml}
                         </div>
                     </div>
                     <div style="display:flex; align-items:center">
@@ -298,7 +292,7 @@
         });
     }
 
-    // --- الحماية (Password System) ---
+    // --- الحماية ---
     function requestAccess(idx) {
         pendingProjectIdx = idx;
         document.getElementById('pin-modal').style.display = 'flex';
@@ -308,15 +302,12 @@
 
     function verifyPin() {
         const input = document.getElementById('pin-input').value;
-        const correctPin = db[pendingProjectIdx].pin;
-
-        if(input === correctPin) {
-            // الباسورد صح
+        if(input === db[pendingProjectIdx].pin) {
             activeProjectIdx = pendingProjectIdx;
             closePinModal();
             openProjectView();
         } else {
-            alert("❌ رمز خطأ! حاول مجدداً");
+            alert("❌ رمز خطأ!");
         }
     }
 
@@ -325,7 +316,6 @@
         pendingProjectIdx = -1;
     }
 
-    // --- التنقل ---
     function openProjectView() {
         document.getElementById('projects-view').style.display = 'none';
         document.getElementById('details-view').style.display = 'block';
@@ -350,7 +340,6 @@
         const cInputs = document.getElementById('client-inputs');
         const title = document.getElementById('modal-title');
 
-        // تصفير الحقول
         document.querySelectorAll('input').forEach(i => i.value = '');
 
         if(activeProjectIdx === -1) {
@@ -367,7 +356,6 @@
 
     function saveData() {
         if(activeProjectIdx === -1) {
-            // حفظ مشروع جديد
             const name = document.getElementById('new-p-name').value;
             const pin = document.getElementById('new-p-pin').value;
             if(name && pin) {
@@ -375,17 +363,19 @@
                 updateStorage();
                 renderProjects();
                 closeAddModal();
-            } else { alert("الرجاء وضع اسم وكلمة سر"); }
+            }
         } else {
-            // حفظ زبون
             const name = document.getElementById('new-c-name').value;
             const phone = document.getElementById('new-c-phone').value;
             const amount = document.getElementById('new-c-amount').value;
+            const desc = document.getElementById('new-c-desc').value || ""; // الوصف
+            
             if(name && phone && amount) {
                 db[activeProjectIdx].clients.push({
                     name: name,
                     phone: phone,
-                    amount: parseFloat(amount)
+                    amount: parseFloat(amount),
+                    desc: desc
                 });
                 updateStorage();
                 renderClients();
@@ -395,7 +385,7 @@
     }
 
     function deleteClient(cIdx) {
-        if(confirm("حذف هذا الدين نهائياً؟")) {
+        if(confirm("حذف هذا الدين؟")) {
             db[activeProjectIdx].clients.splice(cIdx, 1);
             updateStorage();
             renderClients();
@@ -407,14 +397,18 @@
     }
 
     function updateStorage() {
-        localStorage.setItem('baroud_secure_v1', JSON.stringify(db));
+        localStorage.setItem('baroud_secure_v2', JSON.stringify(db));
     }
 
     // --- الواتساب ---
     function getWaLink(client, projName) {
         let ph = client.phone.toString().replace(/\s/g, '');
         if(!ph.startsWith('961')) ph = '961' + ph;
-        const msg = `مرحبا ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.\nيرجى التسديد وشكراً.`;
+        
+        // تجهيز الرسالة مع الوصف
+        const descText = client.desc ? `\nالبيان: ${client.desc}` : '';
+        const msg = `مرحباً ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.${descText}\nيرجى التسديد وشكراً.`;
+        
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
@@ -424,7 +418,7 @@
         window.open(getWaLink(client, proj), '_blank');
     }
 
-    // --- الإرسال الجماعي ---
+    // --- الإرسال الجماعي الذكي ---
     let bulkQ = [];
     let bulkIdx = 0;
 
@@ -444,15 +438,22 @@
         const c = bulkQ[bulkIdx];
         document.getElementById('bulk-c-name').innerText = c.name;
         document.getElementById('bulk-c-amount').innerText = '$' + c.amount;
+        document.getElementById('bulk-c-desc').innerText = c.desc || "بدون وصف";
         document.getElementById('bulk-counter').innerText = `الزبون ${bulkIdx + 1} من ${bulkQ.length}`;
     }
 
     function sendNextBulk() {
         const c = bulkQ[bulkIdx];
         const proj = db[activeProjectIdx].name;
+        
+        // 1. فتح الواتساب
         window.open(getWaLink(c, proj), '_blank');
+        
+        // 2. التحضير للزبون التالي فوراً
         bulkIdx++;
-        updateBulkUI();
+        updateBulkUI(); 
+        
+        // ملاحظة: لما ترجع من الواتساب، رح تلاقي الشاشة تحدثت وصارت جاهزة للي بعده
     }
 
     function closeBulkModal() {
