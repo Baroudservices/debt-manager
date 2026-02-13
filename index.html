@@ -15,6 +15,7 @@
         .brand-name span { color: var(--primary); }
         .balance-card { background: linear-gradient(135deg, #00e676 0%, #00a056 100%); padding: 25px; border-radius: 28px; text-align: center; color: #000; margin-top: 15px; box-shadow: 0 15px 35px rgba(0, 230, 118, 0.2); }
         .balance-amount { font-size: 3rem; font-weight: 900; }
+        .list-container { padding: 0 15px; }
         .app-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 18px; margin-bottom: 15px; display: flex; align-items: center; }
         .card-info { flex: 1; }
         .card-info h3 { margin: 0; font-size: 1.1rem; color: #eee; }
@@ -56,19 +57,17 @@
     <div id="add-modal" class="modal-overlay"><div class="modal-box"><h3 id="m-title">إضافة</h3>
         <div id="p-form"><input type="text" id="p-name" placeholder="اسم المشروع"></div>
         <div id="c-form" style="display:none">
-            <input type="text" id="c-name" placeholder="الاسم الكامل"><input type="tel" id="c-phone" placeholder="رقم الهاتف"><input type="number" id="c-amount" placeholder="المبلغ ($)"><input type="text" id="c-desc" placeholder="البيان">
-        </div><button class="btn-primary" onclick="save()">حفظ</button><button class="btn-primary" style="background:none; color:#666" onclick="closeAdd()">إلغاء</button></div></div>
-
-    <div id="bulk-setup-modal" class="modal-overlay">
-        <div class="modal-box" style="border: 1px solid var(--primary)">
-            <h3>📢 ملاحظة للجميع</h3>
-            <p style="color: #888; font-size: 0.9rem">تظهر في بداية كل رسالة</p>
-            <input type="text" id="bulk-note-in" placeholder="مثلاً: رمضان كريم">
-            <button class="btn-primary" onclick="startBulk()">بدء الإرسال 🚀</button>
-            <button class="btn-primary" style="background:none; color:#666" onclick="closeBulkSetup()">إلغاء</button>
+            <button class="btn-primary" style="background:#444; color:#fff; font-size:0.9rem; margin-bottom:10px" onclick="getContact()">📖 سحب من الأسماء</button>
+            <input type="text" id="c-name" placeholder="الاسم الكامل">
+            <input type="tel" id="c-phone" placeholder="رقم الهاتف">
+            <input type="number" id="c-amount" placeholder="المبلغ ($)">
+            <input type="text" id="c-desc" placeholder="البيان">
         </div>
-    </div>
+        <button class="btn-primary" onclick="save()">حفظ البيانات</button>
+        <button class="btn-primary" style="background:none; color:#666" onclick="closeAdd()">إلغاء</button>
+    </div></div>
 
+    <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box" style="border: 1px solid var(--primary)"><h3>📢 ملاحظة للجميع</h3><input type="text" id="bulk-note-in" placeholder="مثلاً: رمضان كريم"><button class="btn-primary" onclick="startBulk()">بدء الإرسال 🚀</button><button class="btn-primary" style="background:none; color:#666" onclick="closeBulkSetup()">إلغاء</button></div></div>
     <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name"></h2><div id="b-total" style="font-size:4rem; font-weight:900; color:#d32f2f">$0</div><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال الآن ✅</button></div></div>
 
 <script>
@@ -98,6 +97,19 @@
             </div></div>`;
         });
         document.getElementById('projects-view').style.display = 'none'; document.getElementById('details-view').style.display = 'block';
+    }
+
+    async function getContact() {
+        try {
+            const cs = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+            if (cs && cs.length > 0) {
+                document.getElementById('c-name').value = cs[0].name[0];
+                let n = cs[0].tel[0].replace(/\D/g, '');
+                if (n.startsWith('961')) n = n.substring(3);
+                if (n.startsWith('0')) n = n.substring(1);
+                document.getElementById('c-phone').value = n;
+            }
+        } catch (e) { alert("الميزة تتطلب Chrome"); }
     }
 
     function save() {
