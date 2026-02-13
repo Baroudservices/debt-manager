@@ -1,225 +1,367 @@
 <!DOCTYPE html>
-<html lang="en" dir="rtl"> <head>
+<html lang="ar" dir="rtl">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroud Debt Manager 💸</title>
+    <title>Baroud Manager Pro 🚀</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
+        :root { --main-color: #00d26a; --bg-color: #121212; --card-bg: #1e1e1e; }
         body {
-            background-color: #121212;
-            color: #fff;
-            font-family: 'Tajawal', sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: var(--bg-color); color: #fff;
+            font-family: 'Tajawal', sans-serif; margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            width: 100%;
+        /* --- الهيدر والتنقل --- */
+        .header { width: 100%; text-align: center; margin-bottom: 20px; position: relative; }
+        .back-btn {
+            position: absolute; right: 0; top: 0;
+            background: #333; color: #fff; border: none;
+            padding: 8px 15px; border-radius: 8px; cursor: pointer;
+            display: none; /* مخفي بالبداية */
         }
 
-        .total-box {
-            background: linear-gradient(45deg, #00d26a, #0099ff);
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 210, 106, 0.3);
-            margin-bottom: 20px;
+        /* --- الشاشة الرئيسية: المشاريع --- */
+        #projects-view { width: 100%; max-width: 500px; }
+        .project-card {
+            background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+            padding: 20px; margin-bottom: 15px; border-radius: 15px;
+            border: 1px solid #333; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: 0.2s;
         }
+        .project-card:active { transform: scale(0.98); }
+        .p-name { font-size: 1.2em; font-weight: bold; }
+        .p-total { color: var(--main-color); font-weight: 900; font-size: 1.1em; }
 
-        .total-title { font-size: 0.9em; opacity: 0.8; }
-        .total-amount { font-size: 2.5em; font-weight: 900; margin: 5px 0; }
-
-        /* --- الفورم --- */
-        .input-group {
-            background: #1e1e1e;
-            padding: 15px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 500px;
-            box-sizing: border-box;
-            border: 1px solid #333;
-            margin-bottom: 20px;
+        /* --- شاشة التفاصيل: الزبائن --- */
+        #details-view { width: 100%; max-width: 500px; display: none; }
+        .action-bar {
+            display: flex; gap: 10px; margin-bottom: 15px;
         }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 5px 0;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 10px;
-            font-family: 'Tajawal';
-            box-sizing: border-box;
-            text-align: center;
+        .bulk-btn {
+            background: #ff9900; color: #000; font-weight: bold;
+            border: none; padding: 12px; border-radius: 10px; flex: 1; cursor: pointer;
         }
-
-        .add-btn {
-            width: 100%;
-            padding: 15px;
-            background: #fff;
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1.1em;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        /* --- اللائحة --- */
-        .client-list {
-            width: 100%;
-            max-width: 500px;
-        }
-
+        
         .client-card {
-            background: #1e1e1e;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-right: 5px solid #00d26a; /* مؤشر */
+            background: var(--card-bg); padding: 15px;
+            border-radius: 12px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-right: 4px solid var(--main-color);
         }
-
-        .client-info h3 { margin: 0; font-size: 1.1em; }
-        .client-info p { margin: 5px 0 0; color: #888; font-size: 0.8em; }
-        .debt-val { color: #ff4d4d; font-weight: bold; font-size: 1.1em; }
-
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
-
+        .c-info h4 { margin: 0; font-size: 1.1em; }
+        .c-info p { margin: 3px 0 0; color: #888; font-size: 0.8em; }
+        .c-amount { color: #ff4d4d; font-weight: bold; }
         .icon-btn {
-            padding: 10px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2em;
+            background: transparent; border: 1px solid #444; color: #fff;
+            padding: 8px; border-radius: 8px; margin-left: 5px; cursor: pointer;
         }
-        .wa-btn { background: #25D366; color: #fff; }
-        .del-btn { background: #ff0055; color: #fff; }
 
+        /* --- المودال (إضافة / إرسال جماعي) --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 100;
+            display: none; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .modal-content {
+            background: #222; padding: 25px; border-radius: 20px;
+            width: 80%; max-width: 350px; text-align: center; border: 1px solid #444;
+        }
+        input {
+            width: 100%; padding: 12px; margin: 8px 0;
+            background: #333; border: 1px solid #555; color: #fff;
+            border-radius: 8px; text-align: center; box-sizing: border-box;
+        }
+        .save-btn {
+            width: 100%; padding: 12px; background: var(--main-color);
+            border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer;
+        }
+
+        /* ستايل وضع الإرسال الجماعي */
+        .sender-box {
+            background: #fff; color: #000; padding: 20px; border-radius: 20px;
+            width: 85%; text-align: center;
+        }
+        .sender-counter { font-size: 0.9em; color: #555; margin-bottom: 10px; }
+        .sender-name { font-size: 1.5em; font-weight: 900; margin-bottom: 5px; }
+        .sender-amount { font-size: 2em; color: #d32f2f; font-weight: bold; }
+        .next-btn {
+            background: #25D366; color: #fff; width: 100%; padding: 15px;
+            border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold;
+            margin-top: 15px; cursor: pointer;
+        }
+
+        /* زر الإضافة العائم */
+        .fab {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--main-color); width: 60px; height: 60px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 30px; color: #fff; box-shadow: 0 5px 15px rgba(0,210,106,0.4);
+            cursor: pointer; border: none;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2>دفتر ديون Baroud 📒</h2>
+        <button class="back-btn" onclick="goHome()">🔙 رجوع</button>
+        <h2 id="page-title">مشاريع Baroud 💼</h2>
     </div>
 
-    <div class="total-box">
-        <div class="total-title">مجموع الديون بالسوق</div>
-        <div class="total-amount" id="total-display">$0</div>
-    </div>
-
-    <div class="input-group">
-        <input type="text" id="c-name" placeholder="اسم الزبون (مثلاً: علي حمادة)">
-        <input type="number" id="c-phone" placeholder="رقم الهاتف (بدون 0 في الأول) 70xxxxxx">
-        <input type="number" id="c-amount" placeholder="المبلغ ($)">
-        <button class="add-btn" onclick="addClient()">+ تسجيل دين جديد</button>
-    </div>
-
-    <div class="client-list" id="list-container">
+    <div id="projects-view">
         </div>
 
+    <div id="details-view">
+        <div class="action-bar">
+            <button class="bulk-btn" onclick="startBulkSender()">📢 إرسال تذكير للكل</button>
+        </div>
+        <div id="clients-list"></div>
+    </div>
+
+    <button class="fab" onclick="openAddModal()">+</button>
+
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">مشروع جديد</h3>
+            <input type="text" id="in-name" placeholder="الاسم (مثلاً: Hunting Store)">
+            <input type="number" id="in-phone" placeholder="رقم الهاتف" style="display:none">
+            <input type="number" id="in-amount" placeholder="المبلغ ($)" style="display:none">
+            <button class="save-btn" onclick="saveItem()">حفظ</button>
+            <button class="save-btn" style="background:#555; margin-top:5px" onclick="closeModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <div id="bulk-modal" class="modal">
+        <div class="sender-box">
+            <div class="sender-counter" id="bulk-counter">جاري التحضير...</div>
+            <div class="sender-name" id="bulk-name">اسم الزبون</div>
+            <div class="sender-amount" id="bulk-amount">$0</div>
+            <button class="next-btn" onclick="sendNext()">ارسال واتساب 🚀</button>
+            <button style="background:transparent; border:none; color:#555; margin-top:10px" onclick="closeBulk()">إيقاف</button>
+        </div>
+    </div>
+
 <script>
-    // 1. تحميل الداتا أول ما يفتح التطبيق
-    let clients = JSON.parse(localStorage.getItem('baroud_debts')) || [];
-    render();
+    // هيكلية الداتا: مصفوفة مشاريع، كل مشروع بقلبه مصفوفة زبائن
+    let data = JSON.parse(localStorage.getItem('baroud_pro_v2')) || [
+        { name: "Baroud App", clients: [] },
+        { name: "Hunting Store", clients: [] },
+        { name: "Tombola", clients: [] }
+    ];
 
-    function addClient() {
-        const name = document.getElementById('c-name').value;
-        const phone = document.getElementById('c-phone').value;
-        const amount = document.getElementById('c-amount').value;
+    let currentProjectIndex = -1; // -1 يعني نحنا بالصفحة الرئيسية
+    
+    // --- دوال العرض (View Logic) ---
 
-        if(name && phone && amount) {
-            // إضافة للقائمة
-            clients.push({
-                name: name,
-                phone: phone,
-                amount: parseFloat(amount)
-            });
-            
-            // حفظ وتحديث
-            saveData();
-            render();
-            
-            // تنظيف الخانات
-            document.getElementById('c-name').value = '';
-            document.getElementById('c-phone').value = '';
-            document.getElementById('c-amount').value = '';
-        } else {
-            alert('الرجاء تعبئة كل المعلومات!');
-        }
-    }
-
-    function deleteClient(index) {
-        if(confirm('أكيد بدك تمسح هيدا الدين؟')) {
-            clients.splice(index, 1);
-            saveData();
-            render();
-        }
-    }
-
-    function sendWhatsapp(index) {
-        const c = clients[index];
-        // نص الرسالة
-        const msg = `مرحبا ${c.name} 👋\nحبيت ذكرك بحسابك عنا بـ Baroud App.\nالقيمة المستحقة: $${c.amount}\n\nشكراً إلك!`;
+    function renderProjects() {
+        const container = document.getElementById('projects-view');
+        container.innerHTML = '';
         
-        // تنسيق الرقم (نتأكد انو في كود البلد)
-        let phone = c.phone.toString();
-        if(!phone.startsWith('961')) {
-            phone = '961' + phone;
-        }
-
-        // فتح الرابط
-        const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank');
+        data.forEach((proj, index) => {
+            // حساب مجموع الديون للمشروع
+            let total = proj.clients.reduce((sum, c) => sum + c.amount, 0);
+            
+            container.innerHTML += `
+                <div class="project-card" onclick="openProject(${index})">
+                    <div class="p-name">${proj.name}</div>
+                    <div class="p-total">$${total}</div>
+                </div>
+            `;
+        });
     }
 
-    function saveData() {
-        localStorage.setItem('baroud_debts', JSON.stringify(clients));
-    }
-
-    function render() {
-        const list = document.getElementById('list-container');
-        const totalDisplay = document.getElementById('total-display');
-        
+    function renderClients() {
+        const list = document.getElementById('clients-list');
         list.innerHTML = '';
-        let total = 0;
+        
+        if(currentProjectIndex === -1) return;
+
+        let clients = data[currentProjectIndex].clients;
+
+        if(clients.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:#555">ما في ديون مسجلة بعد</p>';
+            return;
+        }
 
         clients.forEach((c, index) => {
-            total += c.amount;
-            
-            // HTML لكل كرت
-            const card = `
+            list.innerHTML += `
                 <div class="client-card">
-                    <div class="client-info">
-                        <h3>${c.name}</h3>
+                    <div class="c-info">
+                        <h4>${c.name}</h4>
                         <p>${c.phone}</p>
-                        <div class="debt-val">$${c.amount}</div>
                     </div>
-                    <div class="actions">
-                        <button class="icon-btn wa-btn" onclick="sendWhatsapp(${index})">💬 واتساب</button>
-                        <button class="icon-btn del-btn" onclick="deleteClient(${index})">🗑️</button>
+                    <div style="display:flex; align-items:center">
+                        <div class="c-amount">$${c.amount}</div>
+                        <button class="icon-btn" onclick="sendOne(${index})">💬</button>
+                        <button class="icon-btn" style="color:#ff4d4d" onclick="deleteClient(${index})">🗑️</button>
                     </div>
                 </div>
             `;
-            list.innerHTML += card;
         });
-
-        totalDisplay.innerText = '$' + total.toFixed(2);
     }
+
+    // --- التنقل ---
+
+    function openProject(index) {
+        currentProjectIndex = index;
+        document.getElementById('projects-view').style.display = 'none';
+        document.getElementById('details-view').style.display = 'block';
+        document.querySelector('.back-btn').style.display = 'block';
+        document.getElementById('page-title').innerText = data[index].name;
+        renderClients();
+    }
+
+    function goHome() {
+        currentProjectIndex = -1;
+        document.getElementById('projects-view').style.display = 'block';
+        document.getElementById('details-view').style.display = 'none';
+        document.querySelector('.back-btn').style.display = 'none';
+        document.getElementById('page-title').innerText = "مشاريع Baroud 💼";
+        renderProjects();
+    }
+
+    // --- الإضافة والحفظ ---
+
+    function openAddModal() {
+        const modal = document.getElementById('add-modal');
+        const title = document.getElementById('modal-title');
+        const inName = document.getElementById('in-name');
+        const inPhone = document.getElementById('in-phone');
+        const inAmount = document.getElementById('in-amount');
+
+        if(currentProjectIndex === -1) {
+            // إضافة مشروع
+            title.innerText = "إضافة مشروع جديد";
+            inName.placeholder = "اسم المشروع (مثلاً: مطعم)";
+            inPhone.style.display = 'none';
+            inAmount.style.display = 'none';
+        } else {
+            // إضافة زبون
+            title.innerText = "تسجيل دين جديد";
+            inName.placeholder = "اسم الزبون";
+            inPhone.style.display = 'block';
+            inAmount.style.display = 'block';
+        }
+        
+        inName.value = ''; inPhone.value = ''; inAmount.value = '';
+        modal.style.display = 'flex';
+    }
+
+    function saveItem() {
+        const name = document.getElementById('in-name').value;
+        
+        if(currentProjectIndex === -1) {
+            // حفظ مشروع
+            if(name) {
+                data.push({ name: name, clients: [] });
+                saveData();
+                renderProjects();
+                closeModal();
+            }
+        } else {
+            // حفظ زبون
+            const phone = document.getElementById('in-phone').value;
+            const amount = document.getElementById('in-amount').value;
+            if(name && phone && amount) {
+                data[currentProjectIndex].clients.push({
+                    name: name,
+                    phone: phone,
+                    amount: parseFloat(amount)
+                });
+                saveData();
+                renderClients();
+                closeModal();
+            }
+        }
+    }
+
+    function deleteClient(idx) {
+        if(confirm("حذف هيدا الدين؟")) {
+            data[currentProjectIndex].clients.splice(idx, 1);
+            saveData();
+            renderClients();
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('add-modal').style.display = 'none';
+    }
+
+    function saveData() {
+        localStorage.setItem('baroud_pro_v2', JSON.stringify(data));
+    }
+
+    // --- الواتساب (الإرسال الفردي والجماعي) ---
+
+    function getWAMsg(client, project) {
+        let phone = client.phone.toString();
+        if(!phone.startsWith('961')) phone = '961' + phone;
+        
+        const msg = `مرحباً ${client.name}،\nحسابك بـ *${project}* هو: $${client.amount}.\nيرجى التسديد وشكراً!`;
+        return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function sendOne(idx) {
+        const client = data[currentProjectIndex].clients[idx];
+        const projName = data[currentProjectIndex].name;
+        window.open(getWAMsg(client, projName), '_blank');
+    }
+
+    // 🔥 نظام الإرسال الجماعي (Queue System) 🔥
+    let bulkQueue = [];
+    let bulkIndex = 0;
+
+    function startBulkSender() {
+        if(currentProjectIndex === -1) return;
+        
+        // جيب كل الزبائن بهيدا المشروع
+        bulkQueue = data[currentProjectIndex].clients;
+        
+        if(bulkQueue.length === 0) {
+            alert("ما في حدا تبعتله!");
+            return;
+        }
+
+        bulkIndex = 0;
+        document.getElementById('bulk-modal').style.display = 'flex';
+        updateBulkUI();
+    }
+
+    function updateBulkUI() {
+        if(bulkIndex >= bulkQueue.length) {
+            closeBulk();
+            alert("✅ تم إرسال التذكير للجميع!");
+            return;
+        }
+
+        const client = bulkQueue[bulkIndex];
+        document.getElementById('bulk-counter').innerText = `الزبون ${bulkIndex + 1} من ${bulkQueue.length}`;
+        document.getElementById('bulk-name').innerText = client.name;
+        document.getElementById('bulk-amount').innerText = '$' + client.amount;
+    }
+
+    function sendNext() {
+        const client = bulkQueue[bulkIndex];
+        const projName = data[currentProjectIndex].name;
+        
+        // فتح واتساب
+        window.open(getWAMsg(client, projName), '_blank');
+        
+        // الانتقال للتالي
+        bulkIndex++;
+        updateBulkUI();
+    }
+
+    function closeBulk() {
+        document.getElementById('bulk-modal').style.display = 'none';
+    }
+
+    // تشغيل التطبيق
+    renderProjects();
+
 </script>
 
 </body>
