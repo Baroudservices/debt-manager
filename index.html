@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroud Vault 4.2 🛡️</title>
+    <title>Baroud App V5 🚀</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -13,7 +13,7 @@
             --edit: #ffcc00;
             --danger: #ff1744;
             --dark: #000000;
-            --glass: rgba(30, 30, 30, 0.9);
+            --glass: rgba(30, 30, 30, 0.95);
             --border: rgba(255, 255, 255, 0.1);
         }
 
@@ -25,17 +25,6 @@
             margin: 0; padding: 20px;
             min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
-        }
-
-        /* --- شاشة الدخول الرئيسية --- */
-        #master-login {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .login-logo {
-            font-size: 4rem; color: var(--primary); margin-bottom: 20px;
-            text-shadow: 0 0 30px rgba(0, 230, 118, 0.5);
         }
 
         /* --- الهيدر --- */
@@ -55,7 +44,6 @@
         /* --- الكروت --- */
         .glass-card {
             background: var(--glass);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border); border-radius: 20px;
             padding: 20px; margin-bottom: 15px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -161,10 +149,7 @@
             box-shadow: 0 5px 15px rgba(238, 82, 83, 0.3); cursor: pointer;
         }
 
-        /* --- تصميم اختيار Wish --- */
-        .wish-selector {
-            display: flex; gap: 10px; margin: 10px 0;
-        }
+        .wish-selector { display: flex; gap: 10px; margin: 10px 0; }
         .wish-option {
             flex: 1; padding: 10px; border: 1px solid #444; border-radius: 10px;
             cursor: pointer; background: #222; transition: 0.2s; font-size: 0.9rem;
@@ -172,27 +157,22 @@
         }
         .wish-option.selected {
             border-color: var(--primary); background: rgba(0, 230, 118, 0.1);
-            box-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
         }
-        .wish-option i { font-size: 1.2rem; margin-bottom: 5px; color: #ccc; }
-        .wish-option.selected i { color: var(--primary); }
+        
+        /* زر جهات الاتصال */
+        .contact-btn {
+            background: #333; color: #fff; border: 1px solid #555;
+            padding: 10px; border-radius: 10px; cursor: pointer;
+            margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; box-sizing: border-box;
+        }
 
     </style>
 </head>
 <body>
 
-    <div id="master-login">
-        <div class="login-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <h2 style="margin-bottom: 5px">ممنوع الدخول ⛔</h2>
-        <p style="color:#888; margin-bottom: 20px">المنطقة خاصة بـ Houssein Baroud</p>
-        <div style="width: 300px; padding: 20px; background: #111; border-radius: 20px; border: 1px solid #333;">
-            <input type="password" id="master-pass" placeholder="أدخل كلمة المرور الرئيسية" style="font-size: 1.2rem; margin-bottom: 10px;">
-            <button class="btn-full" onclick="checkMasterKey()">دخول</button>
-        </div>
-    </div>
-
     <div class="header">
-        <div class="app-title">BAROUD <span>VAULT</span></div>
+        <div class="app-title">BAROUD <span>APP</span></div>
         <button class="back-btn" onclick="goHome()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
     </div>
 
@@ -202,7 +182,7 @@
             <div style="font-size:0.9rem; font-weight:bold; opacity:0.8">مجموع الديون المستحقة</div>
             <div class="summary-val" id="total-debt">$0</div>
         </div>
-        <button class="bulk-send-btn" onclick="startBulk()">
+        <button class="bulk-send-btn" onclick="openBulkSetup()">
             <i class="fa-brands fa-whatsapp"></i> تحصيل الكل (إرسال سريع)
         </button>
         <div class="glass-card" style="padding: 0;" id="clients-list"></div>
@@ -229,20 +209,22 @@
             </div>
 
             <div id="client-inputs" style="display:none">
+                <button class="contact-btn" onclick="pickContact()">
+                    <i class="fa-solid fa-address-book"></i> سحب من جهات الاتصال
+                </button>
+
                 <input type="text" id="new-c-name" placeholder="اسم الزبون">
                 <input type="tel" id="new-c-phone" placeholder="رقم الهاتف">
                 <input type="number" id="new-c-amount" placeholder="المبلغ ($)">
                 <input type="text" id="new-c-desc" placeholder="الوصف (اختياري)">
                 
-                <p style="margin: 10px 0 5px 0; font-size: 0.9rem; color:#888">اختر رقم Wish للدفع:</p>
+                <p style="margin: 10px 0 5px 0; font-size: 0.9rem; color:#888">رقم Wish للدفع:</p>
                 <div class="wish-selector">
                     <div class="wish-option selected" id="wish-opt-1" onclick="selectWish(1)">
-                        <i class="fa-solid fa-wallet"></i>
-                        <span>70385398</span>
+                        <i class="fa-solid fa-wallet"></i><span>70385398</span>
                     </div>
                     <div class="wish-option" id="wish-opt-2" onclick="selectWish(2)">
-                        <i class="fa-solid fa-wallet"></i>
-                        <span>70555732</span>
+                        <i class="fa-solid fa-wallet"></i><span>70555732</span>
                     </div>
                 </div>
             </div>
@@ -262,7 +244,17 @@
         </div>
     </div>
 
-    <div id="bulk-modal" class="modal-overlay">
+    <div id="bulk-setup-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-top:0">📢 رسالة جماعية</h3>
+            <p style="color:#888; font-size:0.9rem;">هل تريد إضافة ملاحظة للجميع؟</p>
+            <input type="text" id="bulk-global-msg" placeholder="مثلاً: رمضان كريم / يرجى التسديد">
+            <button class="btn-full" onclick="startBulk()">ابدأ الإرسال 🚀</button>
+            <button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button>
+        </div>
+    </div>
+
+    <div id="bulk-run-modal" class="modal-overlay">
         <div class="modal-box" style="background: #fff; color:#000;">
             <div style="font-size:3rem; margin-bottom:10px">📨</div>
             <h3 style="margin:0" id="bulk-c-name">الاسم</h3>
@@ -272,7 +264,7 @@
             <button class="btn-full" style="background:#25D366; color:#fff" onclick="sendNextBulk()">
                 <i class="fa-brands fa-whatsapp"></i> إرسال واتساب
             </button>
-            <button class="btn-cancel" style="color:#555" onclick="closeBulkModal()">إيقاف</button>
+            <button class="btn-cancel" style="color:#555" onclick="closeBulkRun()">إيقاف</button>
         </div>
     </div>
 
@@ -286,31 +278,16 @@
     </div>
 
 <script>
-    const MASTER_KEY = "baroud5577"; 
-    // أرقام الـ Wish الثابتة
     const WISH_NUM_1 = "70385398";
     const WISH_NUM_2 = "70555732";
+    let selectedWishNum = WISH_NUM_1;
 
-    let selectedWishNum = WISH_NUM_1; // افتراضياً الرقم الأول
-
-    // --- دخول ---
-    if (sessionStorage.getItem('baroud_logged_in') === 'true') {
-        document.getElementById('master-login').style.display = 'none';
-    }
-    function checkMasterKey() {
-        const input = document.getElementById('master-pass').value;
-        if(input === MASTER_KEY) {
-            document.getElementById('master-login').style.display = 'none';
-            sessionStorage.setItem('baroud_logged_in', 'true');
-        } else { alert("❌ كلمة مرور خاطئة!"); }
-    }
-
-    // --- التطبيق ---
     let db = JSON.parse(localStorage.getItem('baroud_secure_v2')) || [];
     let activeProjectIdx = -1;
     let pendingProjectIdx = -1;
     let pendingDeleteIdx = -1;
     let editingClientIdx = -1;
+    let globalBulkNote = ""; // الرسالة العامة
 
     renderProjects();
 
@@ -324,6 +301,38 @@
         document.getElementById('msg-modal').style.display = 'flex';
     }
     function closeMsgModal() { document.getElementById('msg-modal').style.display = 'none'; }
+
+    // --- Contact Picker (ميزة سحب الأرقام) ---
+    async function pickContact() {
+        const props = ['name', 'tel'];
+        const opts = { multiple: false };
+        try {
+            // التحقق من دعم المتصفح
+            if ('contacts' in navigator && 'select' in navigator.contacts) {
+                const contacts = await navigator.contacts.select(props, opts);
+                if (contacts.length) {
+                    const contact = contacts[0];
+                    // تعبئة الاسم
+                    if (contact.name && contact.name.length) {
+                        document.getElementById('new-c-name').value = contact.name[0];
+                    }
+                    // تعبئة الرقم مع تنظيفه
+                    if (contact.tel && contact.tel.length) {
+                        let cleanNum = contact.tel[0].replace(/\D/g, ''); // حذف كل شي غير الأرقام
+                        // معالجة الرقم اللبناني
+                        if(cleanNum.startsWith('961')) cleanNum = cleanNum.substring(3);
+                        if(cleanNum.startsWith('0')) cleanNum = cleanNum.substring(1);
+                        document.getElementById('new-c-phone').value = cleanNum;
+                    }
+                }
+            } else {
+                showMsg("غير مدعوم", "هذه الميزة تعمل فقط على تطبيقات Android/iOS الحديثة.", "error");
+            }
+        } catch (ex) {
+            // ممكن المستخدم يلغي العملية
+            console.log(ex);
+        }
+    }
 
     function renderProjects() {
         const container = document.getElementById('projects-view');
@@ -397,28 +406,21 @@
         } else { showMsg("رمز خاطئ", "الرمز السري غير صحيح!", "error"); }
     }
     
-    // --- التعامل مع خيارات Wish ---
     function selectWish(option) {
-        // تحديث الشكل
         document.getElementById('wish-opt-1').classList.remove('selected');
         document.getElementById('wish-opt-2').classList.remove('selected');
         document.getElementById('wish-opt-' + option).classList.add('selected');
-        
-        // حفظ القيمة المختارة
         selectedWishNum = (option === 1) ? WISH_NUM_1 : WISH_NUM_2;
     }
 
-    // --- تعديل وإضافة ---
     function openAddModal() {
         editingClientIdx = -1; 
         const modal = document.getElementById('add-modal');
         const pInputs = document.getElementById('project-inputs');
         const cInputs = document.getElementById('client-inputs');
         const title = document.getElementById('modal-title');
-        
         document.querySelectorAll('input').forEach(i => i.value = '');
-        selectWish(1); // إعادة تعيين لرقم 1 افتراضياً
-
+        selectWish(1);
         if(activeProjectIdx === -1) { 
             title.innerText = "إنشاء مشروع جديد 🔐"; pInputs.style.display = 'block'; cInputs.style.display = 'none'; 
         } else { 
@@ -432,19 +434,11 @@
         const modal = document.getElementById('add-modal');
         const title = document.getElementById('modal-title');
         const client = db[activeProjectIdx].clients[idx];
-
         document.getElementById('new-c-name').value = client.name;
         document.getElementById('new-c-phone').value = client.phone;
         document.getElementById('new-c-amount').value = client.amount;
         document.getElementById('new-c-desc').value = client.desc || "";
-
-        // تحديد رقم الـ Wish المحفوظ سابقاً
-        if(client.wishNumber === WISH_NUM_2) {
-            selectWish(2);
-        } else {
-            selectWish(1);
-        }
-
+        if(client.wishNumber === WISH_NUM_2) selectWish(2); else selectWish(1);
         document.getElementById('project-inputs').style.display = 'none';
         document.getElementById('client-inputs').style.display = 'block';
         title.innerText = "تعديل بيانات الدين ✏️";
@@ -464,18 +458,11 @@
             const phone = document.getElementById('new-c-phone').value;
             const amount = document.getElementById('new-c-amount').value;
             const desc = document.getElementById('new-c-desc').value || ""; 
-            
-            // إضافة رقم الـ Wish المختار
             const wishNum = selectedWishNum;
-
             if(name && phone && amount) {
                 const clientObj = { name, phone, amount: parseFloat(amount), desc, wishNumber: wishNum };
-                
-                if(editingClientIdx > -1) {
-                    db[activeProjectIdx].clients[editingClientIdx] = clientObj;
-                } else {
-                    db[activeProjectIdx].clients.push(clientObj);
-                }
+                if(editingClientIdx > -1) { db[activeProjectIdx].clients[editingClientIdx] = clientObj; } 
+                else { db[activeProjectIdx].clients.push(clientObj); }
                 updateStorage(); renderClients(); closeAddModal();
             } else { showMsg("نقص معلومات", "الرجاء تعبئة البيانات كاملة", "error"); }
         }
@@ -488,20 +475,39 @@
         }
     }
 
+    // --- نظام الإرسال الجماعي المطور ---
     let bulkQ = []; let bulkIdx = 0;
-    function startBulk() {
-        bulkQ = db[activeProjectIdx].clients;
-        if(bulkQ.length === 0) return showMsg("لا يوجد زبائن", "لا يوجد ديون مسجلة.", "error");
-        bulkIdx = 0; document.getElementById('bulk-modal').style.display = 'flex'; updateBulkUI();
+
+    function openBulkSetup() {
+        // فحص اذا في زباين
+        if(db[activeProjectIdx].clients.length === 0) return showMsg("تنبيه", "لا يوجد زبائن!", "error");
+        // فتح مودال الإعداد
+        document.getElementById('bulk-global-msg').value = "";
+        document.getElementById('bulk-setup-modal').style.display = 'flex';
     }
+
+    function closeBulkSetup() { document.getElementById('bulk-setup-modal').style.display = 'none'; }
+
+    function startBulk() {
+        // أخذ الرسالة العامة
+        globalBulkNote = document.getElementById('bulk-global-msg').value;
+        closeBulkSetup();
+        
+        bulkQ = db[activeProjectIdx].clients;
+        bulkIdx = 0; 
+        document.getElementById('bulk-run-modal').style.display = 'flex'; 
+        updateBulkUI();
+    }
+    
     function updateBulkUI() {
-        if(bulkIdx >= bulkQ.length) { closeBulkModal(); return showMsg("تم بنجاح", "تم الإرسال للجميع!", "success"); }
+        if(bulkIdx >= bulkQ.length) { closeBulkRun(); return showMsg("تم بنجاح", "تم الإرسال للجميع!", "success"); }
         const c = bulkQ[bulkIdx];
         document.getElementById('bulk-c-name').innerText = c.name;
         document.getElementById('bulk-c-amount').innerText = '$' + c.amount;
         document.getElementById('bulk-c-desc').innerText = c.desc || "بدون وصف";
         document.getElementById('bulk-counter').innerText = `الزبون ${bulkIdx + 1} من ${bulkQ.length}`;
     }
+    
     function sendNextBulk() {
         const c = bulkQ[bulkIdx]; const proj = db[activeProjectIdx].name;
         window.open(getWaLink(c, proj), '_blank'); bulkIdx++; updateBulkUI(); 
@@ -516,23 +522,23 @@
     function goHome() {
         activeProjectIdx = -1; document.getElementById('projects-view').style.display = 'block';
         document.getElementById('details-view').style.display = 'none'; document.querySelector('.back-btn').style.display = 'none';
-        document.querySelector('.app-title').innerHTML = 'BAROUD <span>VAULT</span>'; renderProjects();
+        document.querySelector('.app-title').innerHTML = 'BAROUD <span>APP</span>'; renderProjects();
     }
     function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; editingClientIdx = -1; }
     function requestDelete(cIdx) { pendingDeleteIdx = cIdx; document.getElementById('delete-modal').style.display = 'flex'; }
     function closeDeleteModal() { document.getElementById('delete-modal').style.display = 'none'; pendingDeleteIdx = -1; }
-    function closeBulkModal() { document.getElementById('bulk-modal').style.display = 'none'; }
+    function closeBulkRun() { document.getElementById('bulk-run-modal').style.display = 'none'; }
     function updateStorage() { localStorage.setItem('baroud_secure_v2', JSON.stringify(db)); }
     
-    // --- واتساب مع Wish الديناميكي ---
     function getWaLink(client, projName) {
         let ph = client.phone.toString().replace(/\s/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
-        const descText = client.desc ? `\nالبيان: ${client.desc}` : '';
         
-        // استخدام الرقم المختار فقط
-        const wishNumber = client.wishNumber || WISH_NUM_1; // احتياط لو داتا قديمة
+        const descText = client.desc ? `\nالبيان: ${client.desc}` : '';
+        // إضافة الرسالة العامة إذا وجدت
+        const globalNoteText = globalBulkNote ? `\n\n📌 ملاحظة: ${globalBulkNote}` : '';
+        const wishNumber = client.wishNumber || WISH_NUM_1;
 
-        const msg = `مرحباً ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.${descText}\n\nيرجى التسديد عبر Wish Money على:\n${wishNumber}\n\nشكراً.`;
+        const msg = `مرحباً ${client.name}،\nحسابك بـ *${projName}* هو: $${client.amount}.${descText}${globalNoteText}\n\nيرجى التسديد عبر Wish Money على:\n${wishNumber}\n\nشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
     function sendSingle(cIdx) { const client = db[activeProjectIdx].clients[cIdx]; const proj = db[activeProjectIdx].name; window.open(getWaLink(client, proj), '_blank'); }
