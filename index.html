@@ -8,57 +8,148 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --primary: #00e676; --bg-dark: #121212; --card-bg: #1e1e1e; --danger: #ff1744; --edit: #ffcc00; }
-        body { background: var(--bg-dark); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 80px; min-height: 100vh; }
-        
-        /* Dashboard */
-        .top-dashboard { background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%); padding: 20px; border-radius: 0 0 30px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        :root {
+            --primary: #00e676; 
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --danger: #ff1744;
+            --text-gray: #aaa;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            margin: 0; padding: 0;
+            padding-bottom: 80px;
+            min-height: 100vh;
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* --- Dashboard --- */
+        .top-dashboard {
+            background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%);
+            padding: 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
         .brand-name { font-size: 1.4rem; font-weight: 900; }
         .brand-name span { color: var(--primary); }
-        .balance-card { background: linear-gradient(135deg, #00b09b, #96c93d); padding: 20px; border-radius: 20px; text-align: center; color: #000; }
-        .balance-amount { font-size: 2.5rem; font-weight: 900; }
 
-        /* Cards */
+        .balance-card {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            padding: 20px; border-radius: 20px;
+            text-align: center; color: #000;
+            box-shadow: 0 5px 20px rgba(0, 230, 118, 0.2);
+        }
+        .balance-label { font-size: 0.9rem; font-weight: bold; opacity: 0.8; }
+        .balance-amount { font-size: 2.5rem; font-weight: 900; margin: 5px 0; }
+
+        /* --- Cards --- */
+        .section-title { padding: 0 20px; margin-bottom: 10px; font-size: 1.1rem; color: var(--text-gray); }
         .list-container { padding: 0 15px; }
-        .app-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #333; }
-        .card-icon { width: 50px; height: 50px; background: rgba(0,230,118,0.1); color: var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-left: 15px; }
+
+        .app-card {
+            background: var(--card-bg);
+            border-radius: 18px; padding: 15px; margin-bottom: 12px;
+            display: flex; align-items: center; border: 1px solid #333;
+        }
+        .card-icon {
+            width: 50px; height: 50px; background: rgba(0, 230, 118, 0.1); 
+            color: var(--primary); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+            margin-left: 15px;
+        }
         .card-info { flex: 1; }
         .card-info h3 { margin: 0; font-size: 1rem; }
+        .card-info p { margin: 2px 0 0; font-size: 0.8rem; color: var(--text-gray); }
 
-        /* Nav */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 10px 0; display: flex; justify-content: space-around; border-radius: 25px 25px 0 0; z-index: 900; }
-        .nav-item { color: #666; background: none; border: none; display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; }
+        /* --- Navigation --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%;
+            background: #1a1a1a; padding: 10px 0;
+            display: flex; justify-content: space-around; align-items: center;
+            border-top-left-radius: 25px; border-top-right-radius: 25px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5); z-index: 900;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: #666; background: none; border: none; font-size: 0.8rem; font-family: 'Cairo';
+        }
         .nav-item.active { color: var(--primary); }
-        .nav-add-btn { background: var(--primary); color: #000; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; transform: translateY(-25px); border: 5px solid var(--bg-dark); }
+        .nav-add-btn {
+            background: var(--primary); color: #000;
+            width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; transform: translateY(-25px); border: 5px solid var(--bg-dark);
+            cursor: pointer;
+        }
 
-        /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-box { background: #222; border: 1px solid #444; width: 85%; max-width: 320px; padding: 25px; border-radius: 25px; text-align: center; }
-        input { width: 100%; padding: 15px; margin: 8px 0; background: #111; border: 1px solid #333; color: #fff; border-radius: 12px; text-align: center; font-family: 'Cairo'; box-sizing: border-box; }
-        .btn-full { width: 100%; padding: 15px; background: var(--primary); color: #000; font-weight: bold; border: none; border-radius: 12px; margin-top: 10px; cursor: pointer; }
-        .btn-cancel { background: transparent; color: #888; border: none; margin-top: 10px; }
-
-        /* Password Wrapper */
-        .pass-wrap { position: relative; }
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
+            z-index: 1000; display: none; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: #222; border: 1px solid #444;
+            width: 85%; max-width: 320px; padding: 25px; border-radius: 25px;
+            text-align: center;
+        }
+        
+        .pass-wrap { position: relative; width: 100%; }
         .pass-wrap i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; }
+
+        input {
+            width: 100%; padding: 15px; margin: 8px 0;
+            background: #111; border: 1px solid #333; color: #fff;
+            border-radius: 12px; text-align: center; font-size: 1rem;
+            font-family: 'Cairo'; outline: none; box-sizing: border-box;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .btn-full {
+            width: 100%; padding: 15px; background: var(--primary);
+            color: #000; font-weight: bold; border: none; border-radius: 12px;
+            font-size: 1rem; margin-top: 10px; cursor: pointer; font-family: 'Cairo';
+        }
+        .btn-cancel { background: transparent; color: #888; border: none; margin-top: 10px; font-family: 'Cairo'; }
+
+        .wish-selector { display: flex; gap: 10px; margin: 10px 0; }
+        .wish-option {
+            flex: 1; padding: 10px; border: 1px solid #444; border-radius: 10px;
+            cursor: pointer; background: #222; font-size: 0.8rem; text-align: center;
+        }
+        .wish-option.selected { border-color: var(--primary); background: rgba(0,230,118,0.1); }
     </style>
 </head>
 <body>
 
     <div class="top-dashboard">
-        <div class="brand-name">BAROUD <span>APP</span></div>
-        <div class="balance-card" style="margin-top:15px">
-            <div style="font-size:0.8rem; font-weight:bold">إجمالي الديون</div>
+        <div class="header-top">
+            <div class="brand-name">BAROUD <span>APP</span></div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-label">إجمالي الديون</div>
             <div class="balance-amount" id="main-total">$0</div>
         </div>
     </div>
 
     <div id="projects-view">
+        <div class="section-title">المشاريع</div>
         <div class="list-container" id="projects-list"></div>
     </div>
 
     <div id="details-view" style="display:none; padding: 0 15px;">
-        <button class="btn-cancel" onclick="goHome()" style="width:100%; text-align:right">🔙 العودة</button>
+        <button class="btn-cancel" onclick="goHome()" style="width:100%; text-align:left">🔙 رجوع</button>
         <h2 id="p-title" style="margin:10px 0"></h2>
         <button class="btn-full" style="background:#25D366; color:#fff; margin-bottom:15px" onclick="openBulk()">📢 تحصيل الكل</button>
         <div id="clients-list"></div>
@@ -84,16 +175,24 @@
 
     <div id="add-modal" class="modal-overlay">
         <div class="modal-box">
-            <h3 id="m-title">جديد</h3>
+            <h3 id="m-title">إضافة جديدة</h3>
             <div id="p-form">
                 <input type="text" id="p-name" placeholder="اسم المشروع">
-                <input type="password" id="p-pin" placeholder="الرمز السري (أرقام)" inputmode="numeric">
+                <div class="pass-wrap">
+                    <input type="password" id="p-pin" placeholder="الرمز السري (أرقام)" inputmode="numeric">
+                    <i class="fa-solid fa-eye" onclick="togglePass('p-pin')"></i>
+                </div>
             </div>
             <div id="c-form" style="display:none">
+                <button class="btn-full" style="background:#444; color:#fff; margin-bottom:10px" onclick="getContact()">📖 سحب من الأسماء</button>
                 <input type="text" id="c-name" placeholder="اسم الزبون">
                 <input type="tel" id="c-phone" placeholder="رقم الهاتف">
                 <input type="number" id="c-amount" placeholder="المبلغ ($)">
                 <input type="text" id="c-desc" placeholder="الوصف">
+                <div class="wish-selector">
+                    <div class="wish-option selected" id="w1" onclick="selWish(1)">70385398</div>
+                    <div class="wish-option" id="w2" onclick="selWish(2)">70555732</div>
+                </div>
             </div>
             <button class="btn-full" onclick="save()">حفظ</button>
             <button class="btn-cancel" onclick="closeAdd()">إلغاء</button>
@@ -112,7 +211,7 @@
 
 <script>
     let db = JSON.parse(localStorage.getItem('baroud_v7')) || [];
-    let curP = -1, tempP = -1, editC = -1, isEditP = false;
+    let curP = -1, tempP = -1, curW = "70385398";
 
     function renderHome() {
         const list = document.getElementById('projects-list'); list.innerHTML = '';
@@ -120,56 +219,69 @@
         db.forEach((p, i) => {
             let pSum = p.clients.reduce((s, c) => s + c.amount, 0);
             total += pSum;
-            list.innerHTML += `<div class="app-card" onclick="askPin(${i})"><div class="card-icon"><i class="fa-solid fa-briefcase"></i></div><div class="card-info"><h3>${p.name}</h3><p>${p.clients.length} زبائن • $${pSum}</p></div></div>`;
+            list.innerHTML += `<div class="app-card" onclick="askPin(${i})"><div class="card-icon"><i class="fa-solid fa-briefcase"></i></div><div class="card-info"><h3>${p.name}</h3><p>${p.clients.length} زبائن • $${pSum}</p></div><i class="fa-solid fa-chevron-left"></i></div>`;
         });
         document.getElementById('main-total').innerText = '$' + total;
         document.getElementById('projects-view').style.display = 'block';
         document.getElementById('details-view').style.display = 'none';
     }
 
-    function askPin(i) { tempP = i; document.getElementById('pin-modal').style.display = 'flex'; }
-    function verifyPin() {
-        if(document.getElementById('pin-in').value == db[tempP].pin) {
-            curP = tempP; document.getElementById('pin-modal').style.display = 'none'; renderDetails();
-        } else { alert('خطأ'); }
-    }
     function renderDetails() {
         const list = document.getElementById('clients-list'); list.innerHTML = '';
         const p = db[curP];
         document.getElementById('p-title').innerText = p.name;
         p.clients.forEach((c, i) => {
-            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone} ${c.desc?'• '+c.desc:''}</p></div><div style="text-align:left"><b>$${c.amount}</b><br><i class="fa-brands fa-whatsapp" onclick="sendWA(${i})" style="color:#25D366; margin-left:10px"></i><i class="fa-solid fa-trash" onclick="delC(${i})" style="color:red"></i></div></div>`;
+            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone} ${c.desc?'• '+c.desc:''}</p></div><div style="text-align:left"><b>$${c.amount}</b><br><i class="fa-brands fa-whatsapp" onclick="sendWA(${i})" style="color:#25D366; font-size:1.4rem; margin-left:10px"></i><i class="fa-solid fa-trash" onclick="delC(${i})" style="color:red"></i></div></div>`;
         });
         document.getElementById('projects-view').style.display = 'none';
         document.getElementById('details-view').style.display = 'block';
     }
 
-    function openAdd() {
-        editC = -1; isEditP = false;
-        document.getElementById('add-modal').style.display = 'flex';
-        document.getElementById('p-form').style.display = curP == -1 ? 'block' : 'none';
-        document.getElementById('c-form').style.display = curP == -1 ? 'none' : 'block';
+    async function getContact() {
+        try {
+            const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+            if (contacts.length) {
+                document.getElementById('c-name').value = contacts[0].name[0];
+                let num = contacts[0].tel[0].replace(/\D/g, '');
+                if(num.startsWith('961')) num = num.substring(3);
+                if(num.startsWith('0')) num = num.substring(1);
+                document.getElementById('c-phone').value = num;
+            }
+        } catch (e) { alert("استخدم Chrome للميزة"); }
     }
 
     function save() {
         if(curP == -1) {
             db.push({ name: document.getElementById('p-name').value, pin: document.getElementById('p-pin').value, clients: [] });
         } else {
-            db[curP].clients.push({ name: document.getElementById('c-name').value, phone: document.getElementById('c-phone').value, amount: parseFloat(document.getElementById('c-amount').value), desc: document.getElementById('c-desc').value });
+            db[curP].clients.push({ name: document.getElementById('c-name').value, phone: document.getElementById('c-phone').value, amount: parseFloat(document.getElementById('c-amount').value), desc: document.getElementById('c-desc').value, wish: curW });
         }
         localStorage.setItem('baroud_v7', JSON.stringify(db));
         closeAdd(); curP == -1 ? renderHome() : renderDetails();
     }
 
-    function togglePass(id) { let x = document.getElementById(id); x.type = x.type === "password" ? "text" : "password"; }
-    function goHome() { curP = -1; renderHome(); }
-    function closePin() { document.getElementById('pin-modal').style.display = 'none'; }
-    function closeAdd() { document.getElementById('add-modal').style.display = 'none'; }
-    function delC(i) { if(confirm('حذف؟')) { db[curP].clients.splice(i,1); localStorage.setItem('baroud_v7', JSON.stringify(db)); renderDetails(); }}
     function sendWA(i) {
         let c = db[curP].clients[i];
-        window.open(`https://wa.me/961${c.phone}?text=${encodeURIComponent('حسابك هو: $'+c.amount)}`, '_blank');
+        let link = `https://wa.me/961${c.phone}?text=${encodeURIComponent('مرحباً '+c.name+'، حسابك هو: $'+c.amount+'\nيرجى التسديد عبر Wish لـ: '+(c.wish||"70385398"))}`;
+        window.open(link, '_blank');
     }
+
+    function togglePass(id) { let x = document.getElementById(id); x.type = x.type === "password" ? "text" : "password"; }
+    function askPin(i) { tempP = i; document.getElementById('pin-modal').style.display = 'flex'; }
+    function verifyPin() { if(document.getElementById('pin-in').value == db[tempP].pin) { curP = tempP; closePin(); renderDetails(); } else alert('خطأ'); }
+    function goHome() { curP = -1; renderHome(); }
+    function openAdd() { document.getElementById('add-modal').style.display = 'flex'; document.getElementById('p-form').style.display = curP == -1 ? 'block' : 'none'; document.getElementById('c-form').style.display = curP == -1 ? 'none' : 'block'; }
+    function closePin() { document.getElementById('pin-modal').style.display = 'none'; }
+    function closeAdd() { document.getElementById('add-modal').style.display = 'none'; }
+    function selWish(n) { document.getElementById('w1').classList.remove('selected'); document.getElementById('w2').classList.remove('selected'); document.getElementById('w'+n).classList.add('selected'); curW = (n==1)?"70385398":"70555732"; }
+    function delC(i) { if(confirm('حذف؟')) { db[curP].clients.splice(i,1); localStorage.setItem('baroud_v7', JSON.stringify(db)); renderDetails(); } }
+    
+    let bQ = [], bI = 0;
+    function openBulk() { bQ = db[curP].clients; if(!bQ.length) return; bI = 0; document.getElementById('bulk-modal').style.display = 'flex'; updateBulk(); }
+    function updateBulk() { if(bI >= bQ.length) { document.getElementById('bulk-modal').style.display='none'; return; } document.getElementById('b-name').innerText = bQ[bI].name; document.getElementById('b-total').innerText = '$' + bQ[bI].amount; document.getElementById('b-count').innerText = (bI+1) + '/' + bQ.length; }
+    function nextBulk() { sendWA(bI); bI++; updateBulk(); }
+    function closeBulk() { document.getElementById('bulk-modal').style.display = 'none'; }
+    function openSettings() { if(curP != -1) { document.getElementById('m-title').innerText="إعدادات"; document.getElementById('p-name').value=db[curP].name; document.getElementById('p-pin').value=db[curP].pin; document.getElementById('add-modal').style.display='flex'; document.getElementById('p-form').style.display='block'; document.getElementById('c-form').style.display='none'; } }
 
     renderHome();
 </script>
