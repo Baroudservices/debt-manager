@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroud App Pro 8.1 💎</title>
+    <title>Baroud App Pro 8.2 💎</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -69,7 +69,7 @@
             <div class="wish-selector"><div class="wish-option selected" id="w1" onclick="selWish(1)">70385398</div><div class="wish-option" id="w2" onclick="selWish(2)">70555732</div></div>
         </div><button class="btn-full" onclick="save()">حفظ البيانات</button><button class="btn-cancel" onclick="closeAdd()">إلغاء</button></div></div>
     <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box"><h3>📢 إضافة ملاحظة للجميع</h3><input type="text" id="bulk-note" placeholder="مثلاً: رمضان كريم"><button class="btn-full" onclick="startBulk()">بدأ الإرسال 🚀</button><button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button></div></div>
-    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name"></h2><h1 id="b-total" style="color:#d32f2f; font-size:3.5rem">$0</h1><p id="b-desc" style="background:#eee; padding:5px; border-radius:8px"></p><p id="b-count"></p><button class="btn-full" style="background:#25D366; color:#fff" onclick="nextBulk()">إرسال الآن ✅</button><button class="btn-cancel" style="color:#666" onclick="closeBulkRun()">إيقاف</button></div></div>
+    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name"></h2><h1 id="b-total" style="color:#d32f2f; font-size:3.5rem">$0</h1><p id="b-desc" style="background:#eee; padding:5px; border-radius:8px"></p><p id="b-count"></p><button class="btn-full" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال الآن ✅</button><button class="btn-cancel" style="color:#666" onclick="closeBulkRun()">إيقاف</button></div></div>
 
 <script>
     let db = JSON.parse(localStorage.getItem('baroud_v8')) || [];
@@ -109,16 +109,28 @@
         localStorage.setItem('baroud_v8', JSON.stringify(db)); closeAdd(); curP == -1 ? renderHome() : renderDetails();
     }
 
-    // --- تعديل تنسيق الرسالة ليكون كما طلبت ---
     function getWaLink(c) {
         let ph = c.phone.replace(/\D/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
-        
-        // الملاحظة في البداية مباشرة وبدون كلمة "ملاحظة"
         const notePart = globalNote ? `${globalNote}\n\n` : '';
-        
         const msg = `${notePart}${c.name}،\nحسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}\n\nيرجى التسديد عبر Wish لـ: ${c.wish || "70385398"}\n\nشكراً.`;
-        
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
+    }
+
+    // --- نظام الإرسال والقلب التلقائي ---
+    function autoNextAndSend() {
+        const c = bQ[bI];
+        window.open(getWaLink(c), '_blank'); // فتح واتساب
+        
+        bI++; // قلب العداد فوراً للمستقبل
+        
+        if(bI >= bQ.length) {
+            setTimeout(() => {
+                closeBulkRun();
+                alert('تم إرسال جميع الرسائل بنجاح! ✅');
+            }, 500);
+        } else {
+            updateBulk(); // تحديث الشاشة لتجهيز الاسم التالي
+        }
     }
 
     function openEditClient(i) {
@@ -158,8 +170,14 @@
     function openBulkSetup() { bQ = db[curP].clients; if(!bQ.length) return; document.getElementById('bulk-setup-modal').style.display = 'flex'; }
     function closeBulkSetup() { document.getElementById('bulk-setup-modal').style.display = 'none'; }
     function startBulk() { globalNote = document.getElementById('bulk-note').value; closeBulkSetup(); bI = 0; document.getElementById('bulk-run-modal').style.display = 'flex'; updateBulk(); }
-    function updateBulk() { if(bI >= bQ.length) { closeBulkRun(); return alert('انتهى الإرسال'); } const c = bQ[bI]; document.getElementById('b-name').innerText = c.name; document.getElementById('b-total').innerText = '$' + c.amount; document.getElementById('b-desc').innerText = c.desc || "بدون بيان"; document.getElementById('b-count').innerText = (bI+1) + ' من ' + bQ.length; }
-    function nextBulk() { window.open(getWaLink(bQ[bI]), '_blank'); bI++; updateBulk(); }
+    function updateBulk() { 
+        if(bI >= bQ.length) return; 
+        const c = bQ[bI]; 
+        document.getElementById('b-name').innerText = c.name; 
+        document.getElementById('b-total').innerText = '$' + c.amount; 
+        document.getElementById('b-desc').innerText = c.desc || "بدون بيان"; 
+        document.getElementById('b-count').innerText = (bI+1) + ' من ' + bQ.length; 
+    }
     function closeBulkRun() { document.getElementById('bulk-run-modal').style.display = 'none'; }
 
     renderHome();
