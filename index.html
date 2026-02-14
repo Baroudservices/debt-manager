@@ -11,11 +11,8 @@
     <style>
         :root { --primary: #00e676; --bg: #0a0a0a; --card-bg: #1a1a1a; --border: rgba(255, 255, 255, 0.08); --danger: #ff5252; --edit: #ffd740; }
         body { background-color: var(--bg); color: #ffffff; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 100px; direction: rtl; text-align: right; overflow-x: hidden; }
-        
-        /* شاشة الدخول */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
         .user-btn { width: 100%; max-width: 300px; padding: 20px; margin: 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--card-bg); color: #fff; font-size: 1.2rem; font-weight: 900; cursor: pointer; }
-        
         .top-dashboard { background: linear-gradient(180deg, #161616 0%, var(--bg) 100%); padding: 30px 20px; border-bottom: 1px solid var(--border); position: relative; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .back-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; visibility: hidden; }
@@ -33,7 +30,7 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 2000; }
         .modal-box { background: #181818; border: 1px solid var(--border); width: 90%; max-width: 360px; padding: 30px; border-radius: 35px; text-align: center; }
         input { width: 100%; padding: 15px; margin: 8px 0; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 15px; text-align: center; font-family: 'Cairo'; outline: none; box-sizing: border-box; }
-        .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; margin-top: 10px; }
+        .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; margin-top: 10px; font-family: 'Cairo'; }
         .wish-option { flex: 1; padding: 12px; border: 1px solid #444; border-radius: 12px; cursor: pointer; background: none; color: #fff; }
         .wish-option.selected { border-color: var(--primary); background: rgba(0, 230, 118, 0.1); color: var(--primary); font-weight: bold; }
         .btn-cancel { background: transparent; color: #666; border: none; margin-top: 10px; cursor: pointer; font-weight: bold; }
@@ -75,15 +72,16 @@
     <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary" style="background:var(--danger); color:#fff" onclick="confirmDelete()">حذف</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
 
 <script>
-    const SUPABASE_URL = "https://obugzhhwfsiequoooojd.supabase.co"; 
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9idWd6aGh3ZnNpZXF1b2VvempkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMzg3ODksImV4cCI6MjA4NjYxNDc4OX0.QqIc1HJqS7HmTc7tVKb_TtcEUQdk6wTCE0sQ4nqq_fU"; 
+    // --- إعدادات الربط النهائية المصلحة ---
+    const SUPABASE_URL = "https://obugzhhwfsiequoeozjd.supabase.co"; 
+    const SUPABASE_KEY = "sb_publishable_ReVFcGMx17Gzz_mIaQnaPQ_BpY-5l8z"; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentUser = "", db = [], curP = -1, editC = -1, isEditP = false, bQ = [], bI = 0, gHeader = "", gFooter = "", curW = "70385398", delIdx = -1;
 
     async function preLogin(user) {
         currentUser = user;
-        const { data } = await _supabase.from('vault_users').select('password').eq('username', user).single();
+        const { data } = await _supabase.from('vault_users').select('password').eq('username', user).maybeSingle();
         document.getElementById('pass-modal').style.display = 'flex';
         document.getElementById('pass-msg').innerText = data ? "أدخل كلمة المرور لـ " + user : "أهلاً " + user + "، اختر كلمة مرور لحسابك";
     }
@@ -91,7 +89,7 @@
     async function verifyOrSetPass() {
         const pass = document.getElementById('user-pass-input').value;
         if(!pass) return;
-        const { data } = await _supabase.from('vault_users').select('password').eq('username', currentUser).single();
+        const { data } = await _supabase.from('vault_users').select('password').eq('username', currentUser).maybeSingle();
         
         if(!data) {
             await _supabase.from('vault_users').insert([{ username: currentUser, password: pass }]);
@@ -105,7 +103,7 @@
         document.getElementById('pass-modal').style.display = 'none';
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('user-title').innerText = currentUser.toUpperCase();
+        document.getElementById('user-title').innerText = currentUser === 'Houssein' ? 'HOUSSEIN' : 'HABIB';
         loadData();
     }
 
