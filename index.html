@@ -8,16 +8,14 @@
     <link rel="icon" type="image/png" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root { --primary: #00e676; --bg: #0a0a0a; --card-bg: #1a1a1a; --border: rgba(255, 255, 255, 0.08); --danger: #ff5252; --edit: #ffd740; }
         body { background-color: var(--bg); color: #ffffff; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 100px; direction: rtl; text-align: right; overflow-x: hidden; }
         
-        /* شاشة تسجيل الدخول */
-        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .user-btn { width: 100%; max-width: 300px; padding: 20px; margin: 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--card-bg); color: #fff; font-size: 1.2rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .user-btn:active { transform: scale(0.95); border-color: var(--primary); }
-
+        /* شاشة الدخول */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .user-btn { width: 100%; max-width: 300px; padding: 20px; margin: 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--card-bg); color: #fff; font-size: 1.2rem; font-weight: 900; cursor: pointer; }
+        
         .top-dashboard { background: linear-gradient(180deg, #161616 0%, var(--bg) 100%); padding: 30px 20px; border-bottom: 1px solid var(--border); position: relative; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .back-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; visibility: hidden; }
@@ -35,7 +33,7 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 2000; }
         .modal-box { background: #181818; border: 1px solid var(--border); width: 90%; max-width: 360px; padding: 30px; border-radius: 35px; text-align: center; }
         input { width: 100%; padding: 15px; margin: 8px 0; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 15px; text-align: center; font-family: 'Cairo'; outline: none; box-sizing: border-box; }
-        .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; font-family: 'Cairo'; margin-top: 10px; }
+        .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; margin-top: 10px; }
         .wish-option { flex: 1; padding: 12px; border: 1px solid #444; border-radius: 12px; cursor: pointer; background: none; color: #fff; }
         .wish-option.selected { border-color: var(--primary); background: rgba(0, 230, 118, 0.1); color: var(--primary); font-weight: bold; }
         .btn-cancel { background: transparent; color: #666; border: none; margin-top: 10px; cursor: pointer; font-weight: bold; }
@@ -44,10 +42,10 @@
 <body>
 
     <div id="login-screen">
-        <div style="font-size: 4rem; margin-bottom: 20px;">💎</div>
-        <h2 style="margin-bottom: 30px;">Baroud Vault Cloud</h2>
-        <button class="user-btn" onclick="login('Houssein')">👤 حسين بارود</button>
-        <button class="user-btn" onclick="login('Partner')">🤝 الشريك</button>
+        <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
+        <h2 style="margin-bottom: 25px;">Baroud Vault Cloud</h2>
+        <button class="user-btn" onclick="preLogin('Houssein')">👤 Houssein Baroud</button>
+        <button class="user-btn" onclick="preLogin('Habib')">🤝 Habib Baroud</button>
     </div>
 
     <div id="main-app" style="display: none;">
@@ -61,15 +59,8 @@
                 <div class="balance-amount" id="main-total">$0</div>
             </div>
         </div>
-
         <div id="projects-view"><div class="list-container" id="projects-list"></div></div>
-        
-        <div id="details-view" style="display:none; padding: 0 15px;">
-            <h2 id="p-title" style="text-align:center"></h2>
-            <button class="btn-primary" style="background:#25D366; color:#fff; margin-bottom:20px" onclick="openBulkSetup()">📢 تحصيل الكل</button>
-            <div id="clients-list"></div>
-        </div>
-
+        <div id="details-view" style="display:none; padding: 0 15px;"><h2 id="p-title" style="text-align:center"></h2><button class="btn-primary" style="background:#25D366; color:#fff; margin-bottom:20px" onclick="openBulkSetup()">📢 تحصيل الكل</button><div id="clients-list"></div></div>
         <div class="bottom-nav">
             <button class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
             <button class="nav-add-btn" onclick="openAdd()"><i class="fa-solid fa-plus"></i></button>
@@ -77,35 +68,44 @@
         </div>
     </div>
 
-    <div id="add-modal" class="modal-overlay"><div class="modal-box"><h3>إضافة / تعديل</h3>
-        <div id="p-form"><input type="text" id="p-name" placeholder="اسم المشروع"></div>
-        <div id="c-form" style="display:none">
-            <button class="btn-primary" style="background:#333; color:#fff; margin-bottom:10px" onclick="getContact()">📖 سحب من الأسماء</button>
-            <input type="text" id="c-name" placeholder="الاسم الكامل"><input type="tel" id="c-phone" placeholder="رقم الهاتف"><input type="number" id="c-amount" placeholder="المبلغ ($)"><input type="text" id="c-desc" placeholder="البيان">
-            <div style="display:flex; gap:10px; margin:10px 0"><button class="wish-option selected" id="w1" onclick="selWish(1)">70385398</button><button class="wish-option" id="w2" onclick="selWish(2)">70555732</button></div>
-        </div><button class="btn-primary" onclick="save()">حفظ أونلاين ✅</button><button class="btn-cancel" onclick="closeAdd()">إلغاء</button></div></div>
-
-    <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box" style="border: 1px solid var(--primary)"><h3>📢 رسائل جماعية</h3><input type="text" id="bulk-header" placeholder="المقدمة (اختياري)"><input type="text" id="bulk-footer" placeholder="الخاتمة (اختياري)"><button class="btn-primary" onclick="startBulk()">بدء 🚀</button><button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button></div></div>
-    
-    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name" style="margin:0">الاسم</h2><div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div><input type="text" id="personal-note" placeholder="ملاحظة خاصة لهذا الشخص" style="background:#f0f0f0; color:#000; border:1px solid #ccc"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال واتساب ✅</button></div></div>
-
-    <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary" style="background:var(--danger); color:#fff" onclick="confirmDelete()">نعم، احذف</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
+    <div id="pass-modal" class="modal-overlay"><div class="modal-box"><h3 id="pass-msg"></h3><input type="password" id="user-pass-input" placeholder="أدخل الرمز" inputmode="numeric" style="letter-spacing:5px; font-size:1.5rem"><button class="btn-primary" onclick="verifyOrSetPass()">دخول</button></div></div>
+    <div id="add-modal" class="modal-overlay"><div class="modal-box"><h3 id="m-title">إضافة</h3><div id="p-form"><input type="text" id="p-name" placeholder="اسم المشروع"></div><div id="c-form" style="display:none"><button class="btn-primary" style="background:#333; color:#fff; margin-bottom:10px" onclick="getContact()">📖 سحب من الأسماء</button><input type="text" id="c-name" placeholder="الاسم"><input type="tel" id="c-phone" placeholder="الرقم"><input type="number" id="c-amount" placeholder="المبلغ ($)"><input type="text" id="c-desc" placeholder="البيان"><div style="display:flex; gap:10px; margin:10px 0"><button class="wish-option selected" id="w1" onclick="selWish(1)">70385398</button><button class="wish-option" id="w2" onclick="selWish(2)">70555732</button></div></div><button class="btn-primary" onclick="save()">حفظ</button><button class="btn-cancel" onclick="closeAdd()">إلغاء</button></div></div>
+    <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box"><h3>📢 رسائل جماعية</h3><input type="text" id="bulk-header" placeholder="المقدمة"><input type="text" id="bulk-footer" placeholder="الخاتمة"><button class="btn-primary" onclick="startBulk()">بدء</button><button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button></div></div>
+    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name"></h2><div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div><input type="text" id="personal-note" placeholder="ملاحظة خاصة" style="background:#eee; color:#000"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال ✅</button></div></div>
+    <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary" style="background:var(--danger); color:#fff" onclick="confirmDelete()">حذف</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
 
 <script>
-    // --- إعدادات الربط ---
     const SUPABASE_URL = "https://obugzhhwfsiequoooojd.supabase.co"; 
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9idWd6aGh3ZnNpZXF1b2VvempkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMzg3ODksImV4cCI6MjA4NjYxNDc4OX0.QqIc1HJqS7HmTc7tVKb_TtcEUQdk6wTCE0sQ4nqq_fU";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9idWd6aGh3ZnNpZXF1b2VvempkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMzg3ODksImV4cCI6MjA4NjYxNDc4OX0.QqIc1HJqS7HmTc7tVKb_TtcEUQdk6wTCE0sQ4nqq_fU"; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let currentUser = "";
-    let db = [];
-    let curP = -1, editC = -1, isEditP = false, bQ = [], bI = 0, gHeader = "", gFooter = "", curW = "70385398", delIdx = -1;
+    let currentUser = "", db = [], curP = -1, editC = -1, isEditP = false, bQ = [], bI = 0, gHeader = "", gFooter = "", curW = "70385398", delIdx = -1;
 
-    async function login(user) {
+    async function preLogin(user) {
         currentUser = user;
+        const { data } = await _supabase.from('vault_users').select('password').eq('username', user).single();
+        document.getElementById('pass-modal').style.display = 'flex';
+        document.getElementById('pass-msg').innerText = data ? "أدخل كلمة المرور لـ " + user : "أهلاً " + user + "، اختر كلمة مرور لحسابك";
+    }
+
+    async function verifyOrSetPass() {
+        const pass = document.getElementById('user-pass-input').value;
+        if(!pass) return;
+        const { data } = await _supabase.from('vault_users').select('password').eq('username', currentUser).single();
+        
+        if(!data) {
+            await _supabase.from('vault_users').insert([{ username: currentUser, password: pass }]);
+            login();
+        } else {
+            if(data.password === pass) login(); else alert("كلمة مرور خاطئة");
+        }
+    }
+
+    async function login() {
+        document.getElementById('pass-modal').style.display = 'none';
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('user-title').innerText = user === 'Houssein' ? 'BAROUD' : 'PARTNER';
+        document.getElementById('user-title').innerText = currentUser.toUpperCase();
         loadData();
     }
 
@@ -129,9 +129,8 @@
     function renderDetails() {
         const list = document.getElementById('clients-list'); list.innerHTML = ''; const p = db[curP];
         document.getElementById('p-title').innerText = p.name;
-        document.getElementById('main-total').innerText = '$' + p.clients.reduce((s, c) => s + parseFloat(c.amount || 0), 0);
         p.clients.forEach((c, i) => {
-            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone}</p>${c.desc?'<div style="color:var(--primary); font-size:0.8rem">📝 '+c.desc+'</div>':''}</div><div style="text-align:left"><span class="price-tag">$${c.amount}</span><br><i class="fa-brands fa-whatsapp" onclick="sendWA(${i})" style="color:#25D366; font-size:1.5rem"></i> <i class="fa-solid fa-pen" onclick="openEditClient(${i})" style="color:var(--edit); margin-right:12px"></i> <i class="fa-solid fa-trash" onclick="askDelete(${i})" style="color:var(--danger); margin-right:12px"></i></div></div>`;
+            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone}</p></div><div style="text-align:left"><span class="price-tag">$${c.amount}</span><br><i class="fa-brands fa-whatsapp" onclick="sendWA(${i})" style="color:#25D366; font-size:1.5rem"></i> <i class="fa-solid fa-pen" onclick="openEditClient(${i})" style="color:var(--edit); margin-right:12px"></i> <i class="fa-solid fa-trash" onclick="askDelete(${i})" style="color:var(--danger); margin-right:12px"></i></div></div>`;
         });
     }
 
@@ -139,11 +138,8 @@
         const name = (curP == -1 || isEditP) ? document.getElementById('p-name').value : document.getElementById('c-name').value;
         if(!name) return;
         if(curP == -1 || isEditP) {
-            if(isEditP) {
-                await _supabase.from('vault_data').update({ name }).eq('id', db[curP].id);
-            } else {
-                await _supabase.from('vault_data').insert([{ owner: currentUser, name, clients: [] }]);
-            }
+            if(isEditP) await _supabase.from('vault_data').update({ name }).eq('id', db[curP].id);
+            else await _supabase.from('vault_data').insert([{ owner: currentUser, name, clients: [] }]);
         } else {
             const obj = { name, phone: document.getElementById('c-phone').value, amount: document.getElementById('c-amount').value, desc: document.getElementById('c-desc').value, wish: curW };
             if(editC > -1) db[curP].clients[editC] = obj; else db[curP].clients.push(obj);
@@ -154,32 +150,25 @@
 
     function getWaLink(c, pNote = "") {
         let ph = c.phone.replace(/\D/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
-        const head = gHeader ? `${gHeader}\n\n` : '';
-        const foot = gFooter ? `\n\n${gFooter}` : '';
-        const personal = pNote ? `\n\n${pNote}` : '';
-        const msg = `${head}${c.name}،\nحسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}${personal}${foot}\n\nيرجى التسديد لـ: ${c.wish || "70385398"}\n\nشكراً.`;
+        const msg = `${gHeader?gHeader+'\n\n':''}${c.name}،\nحسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}${pNote?'\n\n'+pNote:''}${gFooter?'\n\n'+gFooter:''}\n\nيرجى التسديد لـ: ${c.wish || "70385398"}\n\nشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
-    function autoNextAndSend() {
-        const pNote = document.getElementById('personal-note').value;
-        window.open(getWaLink(bQ[bI], pNote), '_blank');
-        bI++; if(bI >= bQ.length) { setTimeout(() => { document.getElementById('bulk-run-modal').style.display='none'; loadData(); }, 500); } else { updateBulk(); }
-    }
-
+    function autoNextAndSend() { window.open(getWaLink(bQ[bI], document.getElementById('personal-note').value), '_blank'); bI++; if(bI >= bQ.length) { setTimeout(() => { document.getElementById('bulk-run-modal').style.display='none'; loadData(); }, 500); } else { updateBulk(); } }
     function openAdd() { editC = -1; isEditP = false; document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('add-modal').style.display = 'flex'; document.getElementById('p-form').style.display = curP == -1 ? 'block' : 'none'; document.getElementById('c-form').style.display = curP == -1 ? 'none' : 'block'; selWish(1); }
     function closeAdd() { document.getElementById('add-modal').style.display = 'none'; }
     function selWish(n) { document.getElementById('w1').classList.toggle('selected', n==1); document.getElementById('w2').classList.toggle('selected', n==2); curW = (n==1)?"70385398":"70555732"; }
     function goHome() { curP = -1; renderHome(); }
     function askDelete(i) { delIdx = i; document.getElementById('delete-modal').style.display = 'flex'; }
-    async function confirmDelete() { db[curP].clients.splice(delIdx, 1); await _supabase.from('vault_data').update({ clients: db[curP].clients }).eq('id', db[curP].id); closeDelete(); loadData(); }
+    async function confirmDelete() { db[curP].clients.splice(delIdx, 1); await _supabase.from('vault_data').update({ clients: db[curP].clients }).eq('id', db[curP].id); document.getElementById('delete-modal').style.display = 'none'; loadData(); }
     function closeDelete() { document.getElementById('delete-modal').style.display = 'none'; }
-    function openBulkSetup() { bQ = db[curP].clients; if(!bQ.length) return; document.getElementById('bulk-setup-modal').style.display = 'flex'; }
+    function openBulkSetup() { bQ = db[curP].clients; document.getElementById('bulk-setup-modal').style.display = 'flex'; }
     function closeBulkSetup() { document.getElementById('bulk-setup-modal').style.display = 'none'; }
     function startBulk() { gHeader = document.getElementById('bulk-header').value; gFooter = document.getElementById('bulk-footer').value; closeBulkSetup(); bI = 0; document.getElementById('bulk-run-modal').style.display = 'flex'; updateBulk(); }
     function updateBulk() { const c = bQ[bI]; document.getElementById('b-name').innerText = c.name; document.getElementById('b-total').innerText = '$' + c.amount; document.getElementById('personal-note').value = ""; }
-    function sendWA(i) { gHeader = ""; gFooter = ""; window.open(getWaLink(db[curP].clients[i]), '_blank'); }
     function openEditClient(i) { editC = i; const c = db[curP].clients[i]; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-amount').value = c.amount; document.getElementById('c-desc').value = c.desc || ""; selWish(c.wish=="70555732"?2:1); document.getElementById('m-title').innerText = "تعديل"; document.getElementById('p-form').style.display = 'none'; document.getElementById('c-form').style.display = 'block'; document.getElementById('add-modal').style.display = 'flex'; }
+    function openProjectSettings() { if(curP == -1) return; isEditP = true; document.getElementById('p-name').value = db[curP].name; document.getElementById('m-title').innerText = "إعدادات"; document.getElementById('p-form').style.display = 'block'; document.getElementById('c-form').style.display = 'none'; document.getElementById('add-modal').style.display = 'flex'; }
+    function sendWA(i) { gHeader = ""; gFooter = ""; window.open(getWaLink(db[curP].clients[i]), '_blank'); }
     async function getContact() { try { const cs = await navigator.contacts.select(['name', 'tel'], { multiple: false }); if(cs.length) { document.getElementById('c-name').value = cs[0].name[0]; let n = cs[0].tel[0].replace(/\D/g, ''); if(n.startsWith('961')) n=n.substring(3); if(n.startsWith('0')) n=n.substring(1); document.getElementById('c-phone').value = n; } } catch(e) {} }
 </script>
 </body>
