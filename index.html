@@ -15,7 +15,6 @@
         .brand-name span { color: var(--primary); }
         .balance-card { background: linear-gradient(135deg, #00e676 0%, #00a056 100%); padding: 25px; border-radius: 28px; text-align: center; color: #000; margin-top: 15px; box-shadow: 0 15px 35px rgba(0, 230, 118, 0.2); }
         .balance-amount { font-size: 3rem; font-weight: 900; }
-        .list-container { padding: 0 15px; }
         .app-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 18px; margin-bottom: 15px; display: flex; align-items: center; }
         .card-info { flex: 1; }
         .card-info h3 { margin: 0; font-size: 1.1rem; color: #eee; }
@@ -28,6 +27,9 @@
         .modal-box { background: #181818; border: 1px solid var(--border); width: 90%; max-width: 360px; padding: 30px; border-radius: 35px; text-align: center; }
         input { width: 100%; padding: 18px; margin: 10px 0; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 18px; text-align: center; font-family: 'Cairo'; outline: none; box-sizing: border-box; }
         .btn-primary { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; border-radius: 20px; font-weight: 900; font-size: 1.1rem; cursor: pointer; margin-top: 10px; font-family: 'Cairo'; }
+        .wish-selector { display: flex; gap: 10px; margin: 10px 0; }
+        .wish-option { flex: 1; padding: 12px; border: 1px solid #444; border-radius: 12px; cursor: pointer; background: none; color: #fff; font-family: 'Cairo'; }
+        .wish-option.selected { border-color: var(--primary); background: rgba(0, 230, 118, 0.1); color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -58,21 +60,19 @@
         <div id="p-form"><input type="text" id="p-name" placeholder="اسم المشروع"></div>
         <div id="c-form" style="display:none">
             <button class="btn-primary" style="background:#444; color:#fff; font-size:0.9rem; margin-bottom:10px" onclick="getContact()">📖 سحب من الأسماء</button>
-            <input type="text" id="c-name" placeholder="الاسم الكامل">
-            <input type="tel" id="c-phone" placeholder="رقم الهاتف">
-            <input type="number" id="c-amount" placeholder="المبلغ ($)">
-            <input type="text" id="c-desc" placeholder="البيان">
-        </div>
-        <button class="btn-primary" onclick="save()">حفظ البيانات</button>
-        <button class="btn-primary" style="background:none; color:#666" onclick="closeAdd()">إلغاء</button>
-    </div></div>
+            <input type="text" id="c-name" placeholder="الاسم الكامل"><input type="tel" id="c-phone" placeholder="رقم الهاتف"><input type="number" id="c-amount" placeholder="المبلغ ($)"><input type="text" id="c-desc" placeholder="البيان">
+            <div class="wish-selector">
+                <button class="wish-option selected" id="w1" onclick="selWish(1)">70385398</button>
+                <button class="wish-option" id="w2" onclick="selWish(2)">70555732</button>
+            </div>
+        </div><button class="btn-primary" onclick="save()">حفظ البيانات</button><button class="btn-primary" style="background:none; color:#666" onclick="closeAdd()">إلغاء</button></div></div>
 
     <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box" style="border: 1px solid var(--primary)"><h3>📢 ملاحظة للجميع</h3><input type="text" id="bulk-note-in" placeholder="مثلاً: رمضان كريم"><button class="btn-primary" onclick="startBulk()">بدء الإرسال 🚀</button><button class="btn-primary" style="background:none; color:#666" onclick="closeBulkSetup()">إلغاء</button></div></div>
     <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name"></h2><div id="b-total" style="font-size:4rem; font-weight:900; color:#d32f2f">$0</div><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال الآن ✅</button></div></div>
 
 <script>
     let db = JSON.parse(localStorage.getItem('baroud_v8')) || [];
-    let curP = -1, editC = -1, isEditP = false, bQ = [], bI = 0, globalNote = "";
+    let curP = -1, editC = -1, isEditP = false, bQ = [], bI = 0, globalNote = "", curW = "70385398";
 
     function renderHome() {
         const list = document.getElementById('projects-list'); list.innerHTML = ''; let total = 0;
@@ -99,57 +99,38 @@
         document.getElementById('projects-view').style.display = 'none'; document.getElementById('details-view').style.display = 'block';
     }
 
-    async function getContact() {
-        try {
-            const cs = await navigator.contacts.select(['name', 'tel'], { multiple: false });
-            if (cs && cs.length > 0) {
-                document.getElementById('c-name').value = cs[0].name[0];
-                let n = cs[0].tel[0].replace(/\D/g, '');
-                if (n.startsWith('961')) n = n.substring(3);
-                if (n.startsWith('0')) n = n.substring(1);
-                document.getElementById('c-phone').value = n;
-            }
-        } catch (e) { alert("الميزة تتطلب Chrome"); }
-    }
-
     function save() {
         const name = (curP == -1 || isEditP) ? document.getElementById('p-name').value : document.getElementById('c-name').value;
         if(!name) return;
         if(curP == -1 || isEditP) {
             if(isEditP) db[curP].name = name; else db.push({ name, clients: [] });
         } else {
-            const obj = { name, phone: document.getElementById('c-phone').value, amount: parseFloat(document.getElementById('c-amount').value || 0), desc: document.getElementById('c-desc').value };
+            const obj = { name, phone: document.getElementById('c-phone').value, amount: parseFloat(document.getElementById('c-amount').value || 0), desc: document.getElementById('c-desc').value, wish: curW };
             if(editC > -1) db[curP].clients[editC] = obj; else db[curP].clients.push(obj);
         }
         localStorage.setItem('baroud_v8', JSON.stringify(db)); closeAdd(); renderHome(); if(curP > -1) renderDetails();
     }
 
-    function openEditClient(i) {
-        editC = i; const c = db[curP].clients[i];
-        document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone;
-        document.getElementById('c-amount').value = c.amount; document.getElementById('c-desc').value = c.desc || "";
-        document.getElementById('m-title').innerText = "تعديل الزبون";
-        document.getElementById('p-form').style.display = 'none'; document.getElementById('c-form').style.display = 'block';
-        document.getElementById('add-modal').style.display = 'flex';
-    }
-
     function getWaLink(c) {
         let ph = c.phone.replace(/\D/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
-        const msg = `${globalNote?globalNote+'\n\n':''}${c.name}، حسابك بـ *${db[curP].name}* هو: $${c.amount}\n\nشكراً.`;
+        const note = globalNote ? `${globalNote}\n\n` : '';
+        const msg = `${note}${c.name}،\nحسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}\n\nيرجى التسديد عبر Wish لـ: ${c.wish || "70385398"}\n\nشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
     function autoNextAndSend() { window.open(getWaLink(bQ[bI]), '_blank'); bI++; if(bI >= bQ.length) { setTimeout(() => { document.getElementById('bulk-run-modal').style.display='none'; renderDetails(); }, 500); } else { updateBulk(); } }
     function goHome() { curP = -1; renderHome(); }
-    function openAdd() { editC = -1; isEditP = false; document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('add-modal').style.display = 'flex'; document.getElementById('p-form').style.display = curP == -1 ? 'block' : 'none'; document.getElementById('c-form').style.display = curP == -1 ? 'none' : 'block'; }
+    function openAdd() { editC = -1; isEditP = false; document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('add-modal').style.display = 'flex'; document.getElementById('p-form').style.display = curP == -1 ? 'block' : 'none'; document.getElementById('c-form').style.display = curP == -1 ? 'none' : 'block'; selWish(1); }
     function closeAdd() { document.getElementById('add-modal').style.display = 'none'; }
-    function openProjectSettings() { if(curP == -1) return; isEditP = true; document.getElementById('p-name').value = db[curP].name; document.getElementById('m-title').innerText = "إعدادات المشروع"; document.getElementById('p-form').style.display = 'block'; document.getElementById('c-form').style.display = 'none'; document.getElementById('add-modal').style.display = 'flex'; }
+    function selWish(n) { document.getElementById('w1').classList.toggle('selected', n==1); document.getElementById('w2').classList.toggle('selected', n==2); curW = (n==1)?"70385398":"70555732"; }
     function delC(i) { if(confirm('حذف؟')) { db[curP].clients.splice(i,1); localStorage.setItem('baroud_v8', JSON.stringify(db)); renderDetails(); }}
+    function openEditClient(i) { editC = i; const c = db[curP].clients[i]; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-amount').value = c.amount; document.getElementById('c-desc').value = c.desc || ""; selWish(c.wish=="70555732"?2:1); document.getElementById('m-title').innerText = "تعديل"; document.getElementById('p-form').style.display = 'none'; document.getElementById('c-form').style.display = 'block'; document.getElementById('add-modal').style.display = 'flex'; }
+    function openProjectSettings() { if(curP == -1) return; isEditP = true; document.getElementById('p-name').value = db[curP].name; document.getElementById('m-title').innerText = "إعدادات المشروع"; document.getElementById('p-form').style.display = 'block'; document.getElementById('c-form').style.display = 'none'; document.getElementById('add-modal').style.display = 'flex'; }
     function openBulkSetup() { bQ = db[curP].clients; if(!bQ.length) return; document.getElementById('bulk-setup-modal').style.display = 'flex'; }
-    function closeBulkSetup() { document.getElementById('bulk-setup-modal').style.display = 'none'; }
-    function startBulk() { globalNote = document.getElementById('bulk-note-in').value; closeBulkSetup(); bI = 0; document.getElementById('bulk-run-modal').style.display = 'flex'; updateBulk(); }
+    function startBulk() { globalNote = document.getElementById('bulk-note-in').value; document.getElementById('bulk-setup-modal').style.display = 'none'; bI = 0; document.getElementById('bulk-run-modal').style.display = 'flex'; updateBulk(); }
     function updateBulk() { const c = bQ[bI]; document.getElementById('b-name').innerText = c.name; document.getElementById('b-total').innerText = '$' + c.amount; }
     function sendWA(i) { globalNote = ""; window.open(getWaLink(db[curP].clients[i]), '_blank'); }
+    async function getContact() { try { const cs = await navigator.contacts.select(['name', 'tel'], { multiple: false }); if(cs.length) { document.getElementById('c-name').value = cs[0].name[0]; let n = cs[0].tel[0].replace(/\D/g, ''); if(n.startsWith('961')) n=n.substring(3); if(n.startsWith('0')) n=n.substring(1); document.getElementById('c-phone').value = n; } } catch(e) {} }
 
     renderHome();
 </script>
