@@ -4,54 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Baroud Vault Cloud 🌐</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root { --primary: #00e676; --bg: #0a0a0a; --card-bg: #1a1a1a; --border: rgba(255, 255, 255, 0.08); --danger: #ff5252; --edit: #ffd740; }
         body { background-color: var(--bg); color: #ffffff; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 100px; direction: rtl; text-align: right; overflow-x: hidden; }
-        
-        /* شاشة الدخول */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .user-btn { width: 100%; max-width: 300px; padding: 20px; margin: 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--card-bg); color: #fff; font-size: 1.2rem; font-weight: 900; cursor: pointer; }
-
+        .user-btn { width: 100%; max-width: 300px; padding: 18px; margin: 8px; border-radius: 20px; border: 1px solid var(--border); background: var(--card-bg); color: #fff; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
         .top-dashboard { background: linear-gradient(180deg, #161616 0%, var(--bg) 100%); padding: 30px 20px; border-bottom: 1px solid var(--border); position: relative; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .back-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; visibility: hidden; }
-        .brand-name { font-size: 1.2rem; font-weight: 900; color: #555; margin: 0 auto; }
+        .brand-name { font-size: 1.1rem; font-weight: 900; color: #555; margin: 0 auto; }
         .brand-name span { color: var(--primary); }
         .balance-card { background: linear-gradient(135deg, #00e676 0%, #00a056 100%); padding: 25px; border-radius: 28px; text-align: center; color: #000; box-shadow: 0 15px 35px rgba(0, 230, 118, 0.2); }
         .balance-amount { font-size: 3rem; font-weight: 900; }
-        
-        .list-container { padding: 0 15px; margin-top: 20px; }
-        .app-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 18px; margin-bottom: 15px; display: flex; align-items: center; }
+        .app-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 18px; margin: 0 15px 15px; display: flex; align-items: center; }
         .card-info { flex: 1; }
         .price-tag { font-size: 1.3rem; font-weight: 900; color: #fff; }
-        
         .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(20px); border: 1px solid var(--border); height: 75px; border-radius: 25px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { color: #555; background: none; border: none; font-family: 'Cairo'; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
         .nav-add-btn { background: var(--primary); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #000; transform: translateY(-20px); border: 5px solid var(--bg); }
-
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 6000; }
         .modal-box { background: #181818; border: 1px solid var(--border); width: 90%; max-width: 360px; padding: 30px; border-radius: 35px; text-align: center; }
         input { width: 100%; padding: 15px; margin: 8px 0; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 15px; text-align: center; outline: none; box-sizing: border-box; font-family: 'Cairo'; }
-        
-        /* Wish Selector Styling */
-        .wish-selector { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
-        .wish-option { flex: 1; padding: 12px; border: 2px solid #444; border-radius: 12px; cursor: pointer; background: #222; color: #fff; font-family: 'Cairo'; font-size: 0.9rem; font-weight: bold; transition: all 0.3s ease; }
+        .wish-selector { display: flex; gap: 10px; margin: 15px 0; }
+        .wish-option { flex: 1; padding: 12px; border: 2px solid #444; border-radius: 12px; cursor: pointer; background: #222; color: #fff; font-family: 'Cairo'; font-size: 0.85rem; font-weight: bold; }
         .wish-option.selected { border-color: var(--primary); background: rgba(0, 230, 118, 0.15); color: var(--primary); }
-
         .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; margin-top: 10px; font-family: 'Cairo'; }
-        .btn-danger { background: var(--danger); color: #fff; }
         .btn-cancel { background: transparent; color: #666; border: none; margin-top: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
@@ -62,6 +44,7 @@
         <h2 style="margin-bottom: 25px;">Baroud Vault Cloud</h2>
         <button class="user-btn" onclick="preLogin('Houssein')">👤 Houssein Baroud</button>
         <button class="user-btn" onclick="preLogin('Habib')">🤝 Habib Baroud</button>
+        <button class="user-btn" onclick="preLogin('Rida')">👨‍💻 Rida Kassas</button>
     </div>
 
     <div id="main-app" style="display: none;">
@@ -71,39 +54,38 @@
                 <div class="brand-name"><span id="user-title"></span> <span>VAULT</span></div>
                 <div style="width: 40px;"></div>
             </div>
-            <div class="balance-card">
-                <div class="balance-amount" id="main-total">$0</div>
-            </div>
+            <div class="balance-card"><div class="balance-amount" id="main-total">$0</div></div>
         </div>
-        <div id="projects-view"><div class="list-container" id="projects-list"></div></div>
-        <div id="details-view" style="display:none; padding: 0 15px;"><h2 id="p-title" style="text-align:center"></h2><button class="btn-primary" style="background:#25D366; color:#fff; margin-bottom:20px" onclick="openBulkSetup()">📢 تحصيل الكل</button><div id="clients-list"></div></div>
-        
+        <div id="projects-view"><div id="projects-list"></div></div>
+        <div id="details-view" style="display:none; padding-bottom: 100px;">
+            <h2 id="p-title" style="text-align:center"></h2>
+            <button class="btn-primary" style="background:#25D366; color:#fff; width:90%; margin:0 auto 20px; display:block;" onclick="openBulkSetup()">📢 تحصيل الكل</button>
+            <div id="clients-list"></div>
+        </div>
         <div class="bottom-nav">
             <button class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
             <button class="nav-add-btn" onclick="openAdd()"><i class="fa-solid fa-plus"></i></button>
-            <button class="nav-item" onclick="openProjectSettings()"><i class="fa-solid fa-gear"></i><span>الإعدادات</span></button>
+            <button class="nav-item" onclick="openProjectSettings()"><i class="fa-solid fa-gear"></i><span>إعدادات</span></button>
         </div>
     </div>
 
     <div id="pass-modal" class="modal-overlay"><div class="modal-box"><h3 id="pass-msg"></h3><input type="password" id="user-pass-input" placeholder="الرمز السري" inputmode="numeric"><button class="btn-primary" onclick="verifyOrSetPass()">دخول</button></div></div>
     
+    <div id="single-send-modal" class="modal-overlay"><div class="modal-box"><h3>✉️ رسالة خاصة</h3><p id="s-name" style="color:var(--primary); font-weight:bold;"></p><input type="text" id="single-note" placeholder="اكتب جملة إضافية (اختياري)"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="confirmSingleSend()">إرسال الآن ✅</button><button class="btn-cancel" onclick="closeSingleSend()">إلغاء</button></div></div>
+
     <div id="add-modal" class="modal-overlay"><div class="modal-box"><h3 id="m-title">إضافة</h3>
         <div id="p-form"><input type="text" id="p-name" placeholder="اسم المشروع"></div>
         <div id="c-form" style="display:none">
             <button class="btn-primary" style="background:#333; color:#fff; margin-bottom:10px" onclick="getContact()">📖 سحب من الأسماء</button>
             <input type="text" id="c-name" placeholder="الاسم"><input type="tel" id="c-phone" placeholder="الرقم"><input type="number" id="c-amount" placeholder="المبلغ ($)"><input type="text" id="c-desc" placeholder="البيان">
-            
-            <div class="wish-selector">
-                <button type="button" class="wish-option selected" id="w1" onclick="selWish(1)">70385398</button>
-                <button type="button" class="wish-option" id="w2" onclick="selWish(2)">70555732</button>
-            </div>
+            <div class="wish-selector"><button type="button" class="wish-option selected" id="w1" onclick="selWish(1)">70385398</button><button type="button" class="wish-option" id="w2" onclick="selWish(2)">70555732</button></div>
         </div><button class="btn-primary" onclick="save()">حفظ</button><button class="btn-cancel" onclick="closeAdd()">إلغاء</button></div></div>
 
-    <div id="settings-modal" class="modal-overlay"><div class="modal-box"><h3>⚙️ الإعدادات</h3><div id="edit-p-div" style="display:none"><input type="text" id="edit-p-name" placeholder="تعديل اسم المشروع"><button class="btn-primary" onclick="updateProjectName()">تحديث الاسم</button></div><hr style="opacity:0.1; margin:20px 0"><button class="btn-primary btn-danger" onclick="logout()">تسجيل الخروج 🚪</button><button class="btn-cancel" onclick="closeSettings()">إلغاء</button></div></div>
+    <div id="settings-modal" class="modal-overlay"><div class="modal-box"><h3>⚙️ الإعدادات</h3><div id="edit-p-div" style="display:none"><input type="text" id="edit-p-name" placeholder="تعديل اسم المشروع"><button class="btn-primary" onclick="updateProjectName()">تحديث الاسم</button></div><hr style="opacity:0.1; margin:20px 0"><button class="btn-primary" style="background:red; color:#fff" onclick="logout()">تسجيل الخروج 🚪</button><button class="btn-cancel" onclick="closeSettings()">إلغاء</button></div></div>
 
-    <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box"><h3>📢 تحصيل الكل</h3><input type="text" id="bulk-header" placeholder="المقدمة"><input type="text" id="bulk-footer" placeholder="الخاتمة"><button class="btn-primary" onclick="startBulk()">بدء الإرسال 🚀</button><button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button></div></div>
-    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000; border:none"><h2 id="b-name" style="margin:0"></h2><div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div><input type="text" id="personal-note" placeholder="ملاحظة خاصة" style="background:#f0f0f0; color:#000; border:1px solid #ccc"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال ✅</button></div></div>
-    <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary btn-danger" onclick="confirmDelete()">حذف</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
+    <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box"><h3>📢 تحصيل الكل</h3><input type="text" id="bulk-header" placeholder="المقدمة"><input type="text" id="bulk-footer" placeholder="الخاتمة"><button class="btn-primary" onclick="startBulk()">بدء 🚀</button><button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button></div></div>
+    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name" style="margin:0"></h2><div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div><input type="text" id="personal-note" placeholder="ملاحظة خاصة" style="background:#f0f0f0; color:#000; border:1px solid #ccc"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال ✅</button></div></div>
+    <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary" style="background:red; color:#fff" onclick="confirmDelete()">نعم</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
 
 <script>
     const SUPABASE_URL = "https://obugzhhwfsiequoeozjd.supabase.co"; 
@@ -111,7 +93,7 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentUser = sessionStorage.getItem('vault_user') || "";
-    let db = [], curP = -1, editC = -1, isEditP = false, bQ = [], bI = 0, gHeader = "", gFooter = "", curW = "70385398", delIdx = -1;
+    let db = [], curP = -1, editC = -1, isEditP = false, bQ = [], bI = 0, gHeader = "", gFooter = "", curW = "70385398", delIdx = -1, activeSingleIdx = -1;
 
     window.onload = () => { if (currentUser) login(currentUser, true); }
 
@@ -130,7 +112,7 @@
             await _supabase.from('vault_users').insert([{ username: currentUser, password: pass }]);
             login(currentUser);
         } else {
-            if(data.password === pass) login(currentUser); else alert("الرمز خاطئ");
+            if(data.password === pass) login(currentUser); else alert("خطأ");
         }
     }
 
@@ -139,15 +121,15 @@
         document.getElementById('pass-modal').style.display = 'none';
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('user-title').innerText = user.toUpperCase();
+        document.getElementById('user-title').innerText = user === 'Rida' ? 'RIDA' : user.toUpperCase();
         loadData();
     }
 
     function logout() { sessionStorage.removeItem('vault_user'); location.reload(); }
 
     async function loadData() {
-        const { data, error } = await _supabase.from('vault_data').select('*').eq('owner', currentUser);
-        if (!error) { db = data || []; renderHome(); }
+        const { data } = await _supabase.from('vault_data').select('*').eq('owner', currentUser);
+        db = data || []; renderHome();
     }
 
     function renderHome() {
@@ -167,23 +149,26 @@
         document.getElementById('p-title').innerText = p.name;
         document.getElementById('main-total').innerText = '$' + p.clients.reduce((s, c) => s + parseFloat(c.amount || 0), 0);
         p.clients.forEach((c, i) => {
-            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone}</p>${c.desc?'<div style="color:var(--primary); font-size:0.8rem">📝 '+c.desc+'</div>':''}</div><div style="text-align:left"><span class="price-tag">$${c.amount}</span><br><i class="fa-brands fa-whatsapp" onclick="sendWA(${i})" style="color:#25D366; font-size:1.5rem"></i> <i class="fa-solid fa-pen" onclick="openEditClient(${i})" style="color:var(--edit); margin-right:12px"></i> <i class="fa-solid fa-trash" onclick="askDelete(${i})" style="color:var(--danger); margin-right:12px"></i></div></div>`;
+            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone}</p></div><div style="text-align:left"><span class="price-tag">$${c.amount}</span><br><i class="fa-brands fa-whatsapp" onclick="openSingleSend(${i})" style="color:#25D366; font-size:1.5rem"></i> <i class="fa-solid fa-pen" onclick="openEditClient(${i})" style="color:var(--edit); margin-right:12px"></i> <i class="fa-solid fa-trash" onclick="askDelete(${i})" style="color:var(--danger); margin-right:12px"></i></div></div>`;
         });
         document.getElementById('projects-view').style.display = 'none'; document.getElementById('details-view').style.display = 'block';
     }
 
     async function save() {
-        const name = (curP == -1 || isEditP) ? document.getElementById('p-name').value : document.getElementById('c-name').value;
+        const name = (curP == -1) ? document.getElementById('p-name').value : document.getElementById('c-name').value;
         if(!name) return;
-        if(curP == -1) {
-            await _supabase.from('vault_data').insert([{ owner: currentUser, name, clients: [] }]);
-        } else {
+        if(curP == -1) { await _supabase.from('vault_data').insert([{ owner: currentUser, name, clients: [] }]); } 
+        else {
             const obj = { name, phone: document.getElementById('c-phone').value, amount: document.getElementById('c-amount').value, desc: document.getElementById('c-desc').value, wish: curW };
             if(editC > -1) db[curP].clients[editC] = obj; else db[curP].clients.push(obj);
             await _supabase.from('vault_data').update({ clients: db[curP].clients }).eq('id', db[curP].id);
         }
         closeAdd(); loadData();
     }
+
+    function openSingleSend(i) { activeSingleIdx = i; document.getElementById('s-name').innerText = db[curP].clients[i].name; document.getElementById('single-note').value = ""; document.getElementById('single-send-modal').style.display = 'flex'; }
+    function closeSingleSend() { document.getElementById('single-send-modal').style.display = 'none'; }
+    function confirmSingleSend() { const note = document.getElementById('single-note').value; window.open(getWaLink(db[curP].clients[activeSingleIdx], note), '_blank'); closeSingleSend(); }
 
     function getWaLink(c, pNote = "") {
         let ph = c.phone.replace(/\D/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
@@ -198,7 +183,7 @@
     function goHome() { curP = -1; renderHome(); }
     function openProjectSettings() { document.getElementById('settings-modal').style.display = 'flex'; document.getElementById('edit-p-div').style.display = curP > -1 ? 'block' : 'none'; if(curP > -1) document.getElementById('edit-p-name').value = db[curP].name; }
     function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
-    async function updateProjectName() { const newN = document.getElementById('edit-p-name').value; await _supabase.from('vault_data').update({ name: newN }).eq('id', db[curP].id); closeSettings(); loadData(); }
+    async function updateProjectName() { await _supabase.from('vault_data').update({ name: document.getElementById('edit-p-name').value }).eq('id', db[curP].id); closeSettings(); loadData(); }
     function askDelete(i) { delIdx = i; document.getElementById('delete-modal').style.display = 'flex'; }
     async function confirmDelete() { db[curP].clients.splice(delIdx, 1); await _supabase.from('vault_data').update({ clients: db[curP].clients }).eq('id', db[curP].id); closeDelete(); loadData(); }
     function closeDelete() { document.getElementById('delete-modal').style.display = 'none'; }
@@ -207,7 +192,6 @@
     function startBulk() { gHeader = document.getElementById('bulk-header').value; gFooter = document.getElementById('bulk-footer').value; closeBulkSetup(); bI = 0; document.getElementById('bulk-run-modal').style.display = 'flex'; updateBulk(); }
     function updateBulk() { const c = bQ[bI]; document.getElementById('b-name').innerText = c.name; document.getElementById('b-total').innerText = '$' + c.amount; document.getElementById('personal-note').value = ""; }
     function openEditClient(i) { editC = i; const c = db[curP].clients[i]; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-amount').value = c.amount; document.getElementById('c-desc').value = c.desc || ""; selWish(c.wish=="70555732"?2:1); document.getElementById('m-title').innerText = "تعديل"; document.getElementById('p-form').style.display = 'none'; document.getElementById('c-form').style.display = 'block'; document.getElementById('add-modal').style.display = 'flex'; }
-    function sendWA(i) { gHeader = ""; gFooter = ""; window.open(getWaLink(db[curP].clients[i]), '_blank'); }
     async function getContact() { try { const cs = await navigator.contacts.select(['name', 'tel'], { multiple: false }); if(cs.length) { document.getElementById('c-name').value = cs[0].name[0]; let n = cs[0].tel[0].replace(/\D/g, ''); if(n.startsWith('961')) n=n.substring(3); if(n.startsWith('0')) n=n.substring(1); document.getElementById('c-phone').value = n; } } catch(e) {} }
 </script>
 </body>
