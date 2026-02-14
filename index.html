@@ -84,7 +84,7 @@
     <div id="settings-modal" class="modal-overlay"><div class="modal-box"><h3>⚙️ الإعدادات</h3><div id="edit-p-div" style="display:none"><input type="text" id="edit-p-name" placeholder="تعديل اسم المشروع"><button class="btn-primary" onclick="updateProjectName()">تحديث الاسم</button></div><hr style="opacity:0.1; margin:20px 0"><button class="btn-primary" style="background:red; color:#fff" onclick="logout()">تسجيل الخروج 🚪</button><button class="btn-cancel" onclick="closeSettings()">إلغاء</button></div></div>
 
     <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box"><h3>📢 تحصيل الكل</h3><input type="text" id="bulk-header" placeholder="المقدمة"><input type="text" id="bulk-footer" placeholder="الخاتمة"><button class="btn-primary" onclick="startBulk()">بدء 🚀</button><button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button></div></div>
-    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000"><h2 id="b-name" style="margin:0"></h2><div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div><input type="text" id="personal-note" placeholder="ملاحظة خاصة" style="background:#f0f0f0; color:#000; border:1px solid #ccc"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال ✅</button></div></div>
+    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000; border:none"><h2 id="b-name" style="margin:0"></h2><div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div><input type="text" id="personal-note" placeholder="ملاحظة خاصة" style="background:#f0f0f0; color:#000; border:1px solid #ccc"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال ✅</button></div></div>
     <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary" style="background:red; color:#fff" onclick="confirmDelete()">نعم</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
 
 <script>
@@ -112,7 +112,7 @@
             await _supabase.from('vault_users').insert([{ username: currentUser, password: pass }]);
             login(currentUser);
         } else {
-            if(data.password === pass) login(currentUser); else alert("خطأ");
+            if(data.password === pass) login(currentUser); else alert("الرمز خاطئ");
         }
     }
 
@@ -121,7 +121,7 @@
         document.getElementById('pass-modal').style.display = 'none';
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('user-title').innerText = user === 'Rida' ? 'RIDA' : user.toUpperCase();
+        document.getElementById('user-title').innerText = user.toUpperCase();
         loadData();
     }
 
@@ -149,7 +149,7 @@
         document.getElementById('p-title').innerText = p.name;
         document.getElementById('main-total').innerText = '$' + p.clients.reduce((s, c) => s + parseFloat(c.amount || 0), 0);
         p.clients.forEach((c, i) => {
-            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone}</p></div><div style="text-align:left"><span class="price-tag">$${c.amount}</span><br><i class="fa-brands fa-whatsapp" onclick="openSingleSend(${i})" style="color:#25D366; font-size:1.5rem"></i> <i class="fa-solid fa-pen" onclick="openEditClient(${i})" style="color:var(--edit); margin-right:12px"></i> <i class="fa-solid fa-trash" onclick="askDelete(${i})" style="color:var(--danger); margin-right:12px"></i></div></div>`;
+            list.innerHTML += `<div class="app-card"><div class="card-info"><h3>${c.name}</h3><p>${c.phone}</p>${c.desc?'<div style="color:var(--primary); font-size:0.8rem">📝 '+c.desc+'</div>':''}</div><div style="text-align:left"><span class="price-tag">$${c.amount}</span><br><i class="fa-brands fa-whatsapp" onclick="openSingleSend(${i})" style="color:#25D366; font-size:1.5rem"></i> <i class="fa-solid fa-pen" onclick="openEditClient(${i})" style="color:var(--edit); margin-right:12px"></i> <i class="fa-solid fa-trash" onclick="askDelete(${i})" style="color:var(--danger); margin-right:12px"></i></div></div>`;
         });
         document.getElementById('projects-view').style.display = 'none'; document.getElementById('details-view').style.display = 'block';
     }
@@ -172,7 +172,8 @@
 
     function getWaLink(c, pNote = "") {
         let ph = c.phone.replace(/\D/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
-        const msg = `${gHeader?gHeader+'\n\n':''}${c.name}،\nحسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}${pNote?'\n\n'+pNote:''}${gFooter?'\n\n'+gFooter:''}\n\nيرجى التسديد لـ: ${c.wish || "70385398"}\n\nشكراً.`;
+        // شلنا الاسم من بداية الرسالة لتصير مباشرة
+        const msg = `${gHeader?gHeader+'\n\n':''}حسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}${pNote?'\n\n'+pNote:''}${gFooter?'\n\n'+gFooter:''}\n\nيرجى التسديد لـ: ${c.wish || "70385398"}\n\nشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
