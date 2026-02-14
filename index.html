@@ -46,7 +46,33 @@
         input { width: 100%; padding: 15px; margin: 8px 0; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 15px; text-align: center; outline: none; box-sizing: border-box; font-family: 'Cairo'; }
         .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; margin-top: 10px; font-family: 'Cairo'; }
         .btn-danger { background: var(--danger); color: #fff; }
-        .btn-cancel { background: transparent; color: #666; border: none; margin-top: 10px; cursor: pointer; font-weight: bold; }
+      .btn-cancel { background: transparent; color: #666; border: none; margin-top: 10px; cursor: pointer; font-weight: bold; }
+.wish-selector { 
+        display: flex; 
+        gap: 10px; 
+        margin: 15px 0; 
+        justify-content: center;
+    }
+    .wish-option { 
+        flex: 1; 
+        padding: 12px; 
+        border: 2px solid #444; /* حدود أوضح */
+        border-radius: 12px; 
+        cursor: pointer; 
+        background: #222; 
+        color: #fff; 
+        font-family: 'Cairo'; 
+        font-size: 0.9rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+    /* اللون عند الاختيار - أخضر نيون */
+    .wish-option.selected { 
+        border-color: var(--primary); 
+        background: rgba(0, 230, 118, 0.15); 
+        color: var(--primary); 
+        box-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+    }
     </style>
 </head>
 <body>
@@ -93,9 +119,14 @@
 
     <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box"><h3>📢 تحصيل الكل</h3><input type="text" id="bulk-header" placeholder="المقدمة"><input type="text" id="bulk-footer" placeholder="الخاتمة"><button class="btn-primary" onclick="startBulk()">بدء الإرسال 🚀</button><button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button></div></div>
     <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000; border:none"><h2 id="b-name" style="margin:0"></h2><div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div><input type="text" id="personal-note" placeholder="ملاحظة خاصة" style="background:#f0f0f0; color:#000; border:1px solid #ccc"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال ✅</button></div></div>
-    <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary btn-danger" onclick="confirmDelete()">حذف</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
+ <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary btn-danger" onclick="confirmDelete()">حذف</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
+<div class="wish-selector">
+    <button type="button" class="wish-option selected" id="w1" onclick="selWish(1)">70385398</button>
+    <button type="button" class="wish-option" id="w2" onclick="selWish(2)">70555732</button>
+</div>
 
-<script>
+
+    <script>
     const SUPABASE_URL = "https://obugzhhwfsiequoeozjd.supabase.co"; 
     const SUPABASE_KEY = "sb_publishable_ReVFcGMx17Gzz_mIaQnaPQ_BpY-5l8z"; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
