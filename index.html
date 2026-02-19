@@ -179,7 +179,7 @@
     function getWaLink(c, pNote = "") {
         let ph = c.phone.replace(/\D/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
         // تم تعديل الرسالة لتكون مباشرة بدون الاسم في البداية بناءً على طلبك
-        const msg = `${gHeader?gHeader+'\n\n':''}حسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}${pNote?'\n\n'+pNote:''}${gFooter?'\n\n'+gFooter:''}\n\nيرجى التسديد لـ: ${c.wish || "70385398"}\n\nشكراً.`;
+        const msg = `${gHeader?gHeader+'\n\n':''}حسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}${pNote?'\n\n'+pNote:''}${gFooter?'\n\n'+gFooter:''}\n\nيرجى التسديد عبر الwhish لـ: ${c.wish || "70385398"}\n\nشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
