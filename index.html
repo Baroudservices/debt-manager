@@ -88,7 +88,15 @@
     <div id="settings-modal" class="modal-overlay"><div class="modal-box"><h3>⚙️ الإعدادات</h3><div id="edit-p-div" style="display:none"><input type="text" id="edit-p-name" placeholder="تعديل اسم المشروع"><button class="btn-primary" onclick="updateProjectName()">تحديث الاسم</button></div><hr style="opacity:0.1; margin:20px 0"><button class="btn-primary" style="background:red; color:#fff" onclick="logout()">تسجيل الخروج 🚪</button><button class="btn-cancel" onclick="closeSettings()">إلغاء</button></div></div>
 
     <div id="bulk-setup-modal" class="modal-overlay"><div class="modal-box"><h3>📢 تحصيل الكل</h3><input type="text" id="bulk-header" placeholder="المقدمة"><input type="text" id="bulk-footer" placeholder="الخاتمة"><button class="btn-primary" onclick="startBulk()">بدء 🚀</button><button class="btn-cancel" onclick="closeBulkSetup()">إلغاء</button></div></div>
-    <div id="bulk-run-modal" class="modal-overlay"><div class="modal-box" style="background:#fff; color:#000; border:none"><h2 id="b-name" style="margin:0"></h2><div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div><input type="text" id="personal-note" placeholder="ملاحظة خاصة" style="background:#f0f0f0; color:#000; border:1px solid #ccc"><button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال ✅</button></div></div>
+    <div id="bulk-run-modal" class="modal-overlay">
+        <div class="modal-box" style="background:#fff; color:#000; border:none">
+            <h2 id="b-name" style="margin:0"></h2>
+            <div id="b-total" style="font-size:3.5rem; font-weight:900; color:#d32f2f">$0</div>
+            <input type="text" id="personal-note" placeholder="ملاحظة خاصة" style="background:#f0f0f0; color:#000; border:1px solid #ccc">
+            <button class="btn-primary" style="background:#25D366; color:#fff" onclick="autoNextAndSend()">إرسال ✅</button>
+            <button class="btn-cancel" style="color:var(--danger); margin-top:15px; width:100%; font-weight:900" onclick="skipBulk()">تخطي (Skip) ⏭️</button>
+        </div>
+    </div>
     <div id="delete-modal" class="modal-overlay"><div class="modal-box"><h3>🗑️ حذف؟</h3><button class="btn-primary" style="background:red; color:#fff" onclick="confirmDelete()">نعم</button><button class="btn-cancel" onclick="closeDelete()">تراجع</button></div></div>
 
 <script>
@@ -178,13 +186,28 @@
 
     function getWaLink(c, pNote = "") {
         let ph = c.phone.replace(/\D/g, ''); if(!ph.startsWith('961')) ph = '961' + ph;
-        // تم تعديل الرسالة لتكون مباشرة بدون الاسم في البداية بناءً على طلبك
-        const msg = `${gHeader?gHeader+'\n\n':''}حسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}${pNote?'\n\n'+pNote:''}${gFooter?'\n\n'+gFooter:''}\n\nيرجى التسديد عبر الwhish لـ: ${c.wish || "70385398"}\n\nشكراً.`;
+        const msg = `${gHeader?gHeader+'\n\n':''}حسابك بـ *${db[curP].name}* هو: $${c.amount}${c.desc ? '\nالبيان: '+c.desc : ''}${pNote?'\n\n'+pNote:''}${gFooter?'\n\n'+gFooter:''}\n\nيرجى التسديد لـ: ${c.wish || "70385398"}\n\nشكراً.`;
         return `https://wa.me/${ph}?text=${encodeURIComponent(msg)}`;
     }
 
-    function autoNextAndSend() { window.open(getWaLink(bQ[bI], document.getElementById('personal-note').value), '_blank'); bI++; if(bI >= bQ.length) { setTimeout(() => { document.getElementById('bulk-run-modal').style.display='none'; loadData(); }, 500); } else { updateBulk(); } }
+    function autoNextAndSend() { 
+        window.open(getWaLink(bQ[bI], document.getElementById('personal-note').value), '_blank'); 
+        nextBulk();
+    }
     
+    function skipBulk() {
+        nextBulk();
+    }
+
+    function nextBulk() {
+        bI++; 
+        if(bI >= bQ.length) { 
+            setTimeout(() => { document.getElementById('bulk-run-modal').style.display='none'; loadData(); }, 500); 
+        } else { 
+            updateBulk(); 
+        }
+    }
+
     function openAdd() { 
         editC = -1; 
         document.querySelectorAll('input').forEach(i=>i.value=''); 
@@ -200,9 +223,7 @@
         document.getElementById('w1').classList.remove('selected');
         document.getElementById('w2').classList.remove('selected');
         document.getElementById('w3').classList.remove('selected');
-        
         document.getElementById('w'+n).classList.add('selected');
-        
         if(n==1) curW = "70385398";
         else if(n==2) curW = "70555732";
         else if(n==3) curW = "81329363";
@@ -227,12 +248,10 @@
         document.getElementById('c-phone').value = c.phone; 
         document.getElementById('c-amount').value = c.amount; 
         document.getElementById('c-desc').value = c.desc || ""; 
-        
         let wIdx = 1;
         if(c.wish == "70555732") wIdx = 2;
         else if(c.wish == "81329363") wIdx = 3;
         selWish(wIdx);
-
         document.getElementById('m-title').innerText = "تعديل"; 
         document.getElementById('p-form').style.display = 'none'; 
         document.getElementById('c-form').style.display = 'block'; 
